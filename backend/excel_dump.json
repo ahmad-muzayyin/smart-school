@@ -1,0 +1,154 @@
+[
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "rahmat.hidayat@sekolah.com",
+    "Subject": "Baca Al-Qur’an / Dhuha",
+    "Day": "Senin",
+    "StartTime": "06:40",
+    "EndTime": "07:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "anita.iswari@sekolah.com",
+    "Subject": "Upacara / Wali Kelas",
+    "Day": "Senin",
+    "StartTime": "07:00",
+    "EndTime": "07:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "dhana.suhatin@sekolah.com",
+    "Subject": "Matematika",
+    "Day": "Senin",
+    "StartTime": "07:30",
+    "EndTime": "09:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "sucik.agustini@sekolah.com",
+    "Subject": "Dasar Kejuruan TSM",
+    "Day": "Senin",
+    "StartTime": "09:00",
+    "EndTime": "11:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "sundariya@sekolah.com",
+    "Subject": "PAI",
+    "Day": "Selasa",
+    "StartTime": "07:00",
+    "EndTime": "08:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "lindi.prastika@sekolah.com",
+    "Subject": "Bahasa Indonesia",
+    "Day": "Selasa",
+    "StartTime": "08:30",
+    "EndTime": "10:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "pramatagi@sekolah.com",
+    "Subject": "Produk Kreatif",
+    "Day": "Selasa",
+    "StartTime": "10:00",
+    "EndTime": "11:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "silvia.dwi@sekolah.com",
+    "Subject": "Bahasa Inggris",
+    "Day": "Rabu",
+    "StartTime": "07:00",
+    "EndTime": "08:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "adisasmito@sekolah.com",
+    "Subject": "Informatika",
+    "Day": "Rabu",
+    "StartTime": "08:30",
+    "EndTime": "10:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "rahmat.hidayat@sekolah.com",
+    "Subject": "PJOK",
+    "Day": "Rabu",
+    "StartTime": "10:00",
+    "EndTime": "11:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "kintan.gemi@sekolah.com",
+    "Subject": "IPAS",
+    "Day": "Kamis",
+    "StartTime": "07:00",
+    "EndTime": "08:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "maratul.azizeh@sekolah.com",
+    "Subject": "Bimbingan Konseling",
+    "Day": "Kamis",
+    "StartTime": "08:30",
+    "EndTime": "09:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "alfil.azilah@sekolah.com",
+    "Subject": "Proyek TSM",
+    "Day": "Kamis",
+    "StartTime": "09:30",
+    "EndTime": "11:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "ahmad.mursyid@sekolah.com",
+    "Subject": "Bahasa Indonesia",
+    "Day": "Sabtu",
+    "StartTime": "07:00",
+    "EndTime": "08:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "astutik.hartina@sekolah.com",
+    "Subject": "IPAS",
+    "Day": "Sabtu",
+    "StartTime": "08:30",
+    "EndTime": "10:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "rahmat.hidayat@sekolah.com",
+    "Subject": "PJOK",
+    "Day": "Sabtu",
+    "StartTime": "10:00",
+    "EndTime": "11:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "badrul.munir@sekolah.com",
+    "Subject": "PAI",
+    "Day": "Minggu",
+    "StartTime": "07:00",
+    "EndTime": "08:30"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "silvia.dwi@sekolah.com",
+    "Subject": "Bahasa Inggris",
+    "Day": "Minggu",
+    "StartTime": "08:30",
+    "EndTime": "10:00"
+  },
+  {
+    "ClassName": "X DPB",
+    "TeacherEmail": "dika.rofitya@sekolah.com",
+    "Subject": "Informatika",
+    "Day": "Minggu",
+    "StartTime": "10:00",
+    "EndTime": "11:30"
+  }
+]

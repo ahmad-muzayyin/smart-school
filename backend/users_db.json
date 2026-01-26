@@ -1,0 +1,1394 @@
+[
+  {
+    "email": "salman.al-farisi.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "alifah.zatilizah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "atoillah.azizi.s.kom@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "sitti.hairul.nisak@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.4@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "firdausil.jannah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "anita.iswari@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.ilzam.farubi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "karimatul.jannah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.rofiki@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.sufandi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "selfi.ana.febrianti@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nabila.fatarani.eldifa@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fina.handayani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.fadli@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "lindi.prastika.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "dhaify.ameliatur.rizkiah.aziz@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.zumaroh.adawiyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.8@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "reta.fatimatus.zahra@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "hafid@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "mohammad.dwi.andika@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.4@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "pramatagi.flosyandini.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "nafisatul.auliya@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.farel.irfandi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.6@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sofiatus.salsabila@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rina.okta.azizah.isnain@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.laily.s.farm.@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "husnul.hotima@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "bakdianto@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "niki.dwi.maulidiyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.refan.nazi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "lira.firnanda@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fatimatus.zahro@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.aisyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "yasiratus.zabila@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "m..dhikron.fadhli.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "teacher2.1@school.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.ansori@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.halim@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "alfia.hibatun.rosidah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.hadiansyah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "khotiful.umam@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ismia.rofiqotul.hawa@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.revi.anggara@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dafid.saiful.islam@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.nur.risqi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "misbahul.hasan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.lailatul.musyarrofah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.zainullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.rezalur.rozikin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sucik.agustini.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "safina.islamiah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.7@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.8@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "naisilatul.masruroh@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.alfan.fariqi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.widat@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sofiatul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.ridho.aditia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "heni@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "naezyla.ramadani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.sulaiman.efendi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "citra.kamalia.s.kom@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "gita.pratiwi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sundariya.s.pd.i@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "saifullah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "student2.Kelas11.9@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "agesta.ameliya.putri.s.si@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "revaldi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "titin.agustin.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.ifan.fatoni@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.holil.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "rika.hamdana.balqis@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.arif.febrianto@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "vina.pandu.winata@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "deirsa.nurrahmah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.abdul.ghafur@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "h..hairul.m.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "kintan.gemi.nastiti.s.farm@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "siti.qudsiatul.fitriah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.riski.ardiansyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "abdul.wafi.maulidi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.alfarisi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "anisatus.sholihah.ainul.khoiroh@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dhana.suhatin.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "student2.Kelas12.10@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "aprilia.duwitasari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sifana.albaida@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.hafidah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "adi.sasmito.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "fadilatul.aulia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "maulidatul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.3@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "imtinan.rahma.ms@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.bahrul.ulum@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.4@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "alfil.azilah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.rizal.saputra@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "susanto@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nuril.badik@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dikrih@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.amilia.sari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "silvia.dwi.a.n.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "novita.aulia.putri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rofatul.hakikiyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fanisa.maulidatul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.1@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.nur.haliza@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "amelda.ananda.handayani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.hasanud.dhafir@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.alfin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ikbalullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "m.taufik.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.khoiriri.s.tr..kom@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "aril.fauzi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rahmat.hidayat.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "arinda.zahirotul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "aminatus.zuhriya@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.randi.ilzam@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.arof.a.f@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.9@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ayu.ulandari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dian.indayani.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "teacher2.2@school.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "student2.Kelas13.7@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "vergi.wahyu.prasetya@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "lusiana.anggraini@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "risqi.ameliya.putri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dava.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "musrifatul.qomariyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ferdian.sairullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.sulton.adi.b@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "mohammad.afdal@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "qurrota.nazyla.arifin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nur.abidah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "mohammad.firdaus.abrori@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "septiya.wardani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.1@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.raihan.aditya.saputra@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "anwar.nuris@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.abd..azis@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "amalia.qodrun.nada@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.suhendra@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.fawaid@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sitti.nur.alisah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nailatul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.fikri.oktafiandi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "wasilatur.rohmania@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sitti.rofiatus.solihah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "bunga.yuliantika@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.5@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rokibul.amin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "putri.angel.mareta@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "putri.zilva.yuliana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.6@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muchammad.zaoqi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sakinah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "1@school.com",
+    "role": "SCHOOL_ADMIN"
+  },
+  {
+    "email": "student2.Kelas11.6@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "salsabilatul.khoirot@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "bela.auni.sofiyatul.fiqriyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.1@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dessty.ayu.fitriani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rizqi.talita@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.alif.nur@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.faralita@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.azril.khoitul.anwar@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.nur.kholes@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "amelia.putri.lestari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "isadatur.rofikoh@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "husnus.dzikri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "failida.ustania@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rahmat.hidayat@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.10@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "retha.fairuz.az.zahra@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "silatul.fitrih@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.iqbal@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "raudiyatul.jannah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "badrul.munir.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "student2.Kelas12.2@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.amrullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "adelia.nur.cahyani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "farel.destiyan.adi.prayoga@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sindi.aulia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rosa.anggraini@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "2@school.com",
+    "role": "SCHOOL_ADMIN"
+  },
+  {
+    "email": "iro.waziroh.m.pd.i@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "nayla.nur.salsabila@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.abdul.holik@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "shifa.maulidatul.karomah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "istiqomatul.maula@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.2@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "wahyu.indah.kumalasari.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "musfiratus.solihah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "khairun.nasrullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "adit.ari.firdaus@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "alxena.khairani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.9@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "hikmatul.jannah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "aulia.maghfiroh@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.agus.tholib@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.khoirur.rofiqin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "teacher2.3@school.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "dinda.natalia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "novia.tri.lestari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "winda.oktarina.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "misyono@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "irwan.supriyadi@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "helmi.yahya@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "auliatul.fitriyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "m..akbar.hakiki.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "nashrin.inayatullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dika.rofitya.dewi.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "elsa.monika@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.nuril.anwar@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ilham.arfiansyah.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "sinaryo@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.ridhollahul.hasan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "pak.riyan@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "qoriatul.fadhilah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ilma.maisuroh@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fika.nuril.firdausi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.5@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "mahfud.s.pd.i@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "ahmad.maulana.ishak.s.kom@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "tiara.verinka.sari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "putra.holifatur.rohmatullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "firda.maulidina@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "greta.putri.cantika@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ayatullah.kindi.alfaroby@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.haykal.fitriyan.syah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ansorullah@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "nuari.isak.duandasyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "uun.umariah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.mursyid.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "ilham.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.8@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ziyadah.s.pd.i@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.indra.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "noviyanti.kodariyah@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "hj..siti.maryam.m.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.sofyan.sori@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ratih.ulfa.istikomah.s.pd.@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.riki.firmansyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rizka.nur.azizah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "moh.rojul.gufron@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "suci.dwinda.pertiwi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "tri.nur.wahyuni.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "lauratul.jannah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "m.fikri.sahbana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.3@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.jefri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "yeni.rahmawatie.i.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.nizar.ramadani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ricky.fernando@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dellatul.aulia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "amelinda.silfatun.nabila@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "cinta.aura.kasih@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "sodikil.wakdi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nailatul.rohmah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ainul.yaqin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "firdaus.dwi.wardana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nur.maghfirotul.yulisnaida@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "kholik.rahman.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "muhammad.rizal.aminullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.dava@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "citralia.safitri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "abdul.rofik@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "digita.halfin.nurin.diani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "anang.maulana.mahdi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "saifur.rohman@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "maratul.azizeh.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "sevy.dwi.ramadhani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas13.2@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "evah.fahmadiah.ulan.maulidi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "abil.hasan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nur.hakimah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.aditya.wardana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "masyaril.harom@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "m.indra.wahyudi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.khorul.sofyan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.nafi.nur.wildan.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "wiwin.widiyanti@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "wardah.helga.syafia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.nuril.firdaus@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fahmi.nurul.qodri@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.yusika@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.hasan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.faozi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ainur.rozikin.s.kom.@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "nur.indah.sofia.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "irfan.dewem@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.10@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fauziah.atikah.anam@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "tia.agustin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "syifa.aufa.salsabila@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "bunga.puspita.dewi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahvif.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.efendi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "kurnia.hidayati@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "alika.fitroh.hanifiah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmad.fairozi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "lauriyatul.fajriyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "owner@attendance.com",
+    "role": "OWNER"
+  },
+  {
+    "email": "kasih.awani@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.ilham@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "naylatul.istiqomah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "safinatus.sofiyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "dimas.niko.saifullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "salfa.amiliatus.sahro@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.yusron.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "karimullah@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "hendri.s.psi@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "novita.sari@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "siti.susanti@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "hilmiatul.faridah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "miftahul.arifin@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fitriyah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "iqbal.maulana@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "romzatul.widat@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "nailatus.saadah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.izet.amrullah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "abdul.malik@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "zubaydi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "shiren.adelia.asat@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ahmat.akbar@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.refan@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "astutik.hartina.s.pd@sekolah.com",
+    "role": "TEACHER"
+  },
+  {
+    "email": "hofifatul.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "kausar.wijaya@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "amelia.safa@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "citra.lestari.aprilia@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rahmad.hakiki@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.7@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "wildan.habibi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "ana.rismatul.aini@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "naila.nur.hasanah@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "wike.damayanti@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "rendi.hidayat@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas11.5@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "fitriyatus.zahro@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "najmil.lailih@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "student2.Kelas12.3@school.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "igo.akbar.hasyimi@sekolah.com",
+    "role": "STUDENT"
+  },
+  {
+    "email": "muhammad.rifki@sekolah.com",
+    "role": "STUDENT"
+  }
+]

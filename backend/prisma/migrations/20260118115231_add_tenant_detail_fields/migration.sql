@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `tenant` ADD COLUMN `address` VARCHAR(191) NULL,
+    ADD COLUMN `email` VARCHAR(191) NULL,
+    ADD COLUMN `logo` VARCHAR(191) NULL,
+    ADD COLUMN `phone` VARCHAR(191) NULL,
+    ADD COLUMN `website` VARCHAR(191) NULL;

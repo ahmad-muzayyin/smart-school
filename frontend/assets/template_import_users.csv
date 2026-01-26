@@ -1,0 +1,6 @@
+Name,Email,Password,Role,ClassName
+Contoh Siswa SMA,siswa.sma@sekolah.com,123456,STUDENT,X IPA 1
+Contoh Siswa SMK TKJ,siswa.tkj@sekolah.com,123456,STUDENT,X TKJ 1
+Contoh Siswa SMK RPL,siswa.rpl@sekolah.com,123456,STUDENT,XI RPL 2
+Contoh Siswa SMK AKL,siswa.akl@sekolah.com,123456,STUDENT,XII AKL 1
+Contoh Guru,guru@sekolah.com,123456,TEACHER,

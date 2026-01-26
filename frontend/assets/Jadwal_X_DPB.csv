@@ -1,0 +1,58 @@
+﻿ClassName,TeacherEmail,Subject,Day,StartTime,EndTime
+X DPB,ahmad.mursyid@sekolah.com,Bahasa Indonesia,Sabtu,07:00,08:30
+X DPB,astutik.hartina@sekolah.com,IPAS,Sabtu,08:30,10:00
+X DPB,rahmat.hidayat@sekolah.com,PJOK,Sabtu,10:00,11:30
+X DPB,badrul.munir@sekolah.com,PAI,Minggu,07:00,08:30
+X DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Minggu,08:30,10:00
+X DPB,dika.rofitya@sekolah.com,Informatika,Minggu,10:00,11:30
+X DPB,rahmat.hidayat@sekolah.com,Baca Al-Qur’an / Dhuha,Senin,06:40,07:00
+X DPB,anita.iswari@sekolah.com,Upacara / Wali Kelas,Senin,07:00,07:30
+X DPB,dhana.suhatin@sekolah.com,Matematika,Senin,07:30,09:00
+X DPB,sucik.agustini@sekolah.com,Dasar Kejuruan TSM,Senin,09:00,11:30
+X DPB,sundariya@sekolah.com,PAI,Selasa,07:00,08:30
+X DPB,lindi.prastika@sekolah.com,Bahasa Indonesia,Selasa,08:30,10:00
+X DPB,pramatagi@sekolah.com,Produk Kreatif,Selasa,10:00,11:30
+X DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Rabu,07:00,08:30
+X DPB,adisasmito@sekolah.com,Informatika,Rabu,08:30,10:00
+X DPB,rahmat.hidayat@sekolah.com,PJOK,Rabu,10:00,11:30
+X DPB,kintan.gemi@sekolah.com,IPAS,Kamis,07:00,08:30
+X DPB,maratul.azizeh@sekolah.com,Bimbingan Konseling,Kamis,08:30,09:30
+X DPB,alfil.azilah@sekolah.com,Proyek TSM,Kamis,09:30,11:30
+XI DPB,wahyu.indah@sekolah.com,PJOK,Sabtu,07:00,08:30
+XI DPB,wahyu.indah@sekolah.com,PJOK,Sabtu,08:30,10:00
+XI DPB,ahmad.mursyid@sekolah.com,PKN,Sabtu,10:00,11:30
+XI DPB,maratul.azizeh@sekolah.com,PKK,Minggu,07:00,08:30
+XI DPB,maratul.azizeh@sekolah.com,PKK,Minggu,08:30,10:00
+XI DPB,rahmat.hidayat@sekolah.com,Ekstrakurikuler,Minggu,10:00,11:30
+XI DPB,rahmat.hidayat@sekolah.com,Baca Al-Qur’an / Dhuha,Senin,06:40,07:00
+XI DPB,ahmad.mursyid@sekolah.com,Upacara / Wali Kelas,Senin,07:00,07:30
+XI DPB,maratul.azizeh@sekolah.com,PKK,Senin,07:30,09:00
+XI DPB,astutik.hartina@sekolah.com,Pola,Senin,09:00,11:30
+XI DPB,sundariya@sekolah.com,PAI,Selasa,07:00,08:30
+XI DPB,sundariya@sekolah.com,PAI,Selasa,08:30,10:00
+XI DPB,pramatagi.flosyandini@sekolah.com,Menjahit,Selasa,10:00,11:30
+XI DPB,rahmat.hidayat@sekolah.com,Matematika,Rabu,07:00,08:30
+XI DPB,rahmat.hidayat@sekolah.com,Matematika,Rabu,08:30,10:00
+XI DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Rabu,10:00,11:30
+XI DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Kamis,07:00,08:30
+XI DPB,dhana.suhatin@sekolah.com,Digital Marketing,Kamis,08:30,10:00
+XI DPB,pramatagi.flosyandini@sekolah.com,Menjahit,Kamis,10:00,11:30
+XII DPB,pramatagi.flosyandini@sekolah.com,Pola,Sabtu,07:00,08:30
+XII DPB,pramatagi.flosyandini@sekolah.com,Pola,Sabtu,08:30,10:00
+XII DPB,pramatagi.flosyandini@sekolah.com,Menjahit,Sabtu,10:00,11:30
+XII DPB,silvia.dwi@sekolah.com,Bahasa Indonesia,Minggu,07:00,08:30
+XII DPB,silvia.dwi@sekolah.com,Bahasa Indonesia,Minggu,08:30,10:00
+XII DPB,agesta.ameliya@sekolah.com,Pilihan,Minggu,10:00,11:30
+XII DPB,rahmat.hidayat@sekolah.com,Baca Al-Qur’an / Dhuha,Senin,06:40,07:00
+XII DPB,winda.oktarina@sekolah.com,Upacara / Wali Kelas,Senin,07:00,07:30
+XII DPB,ahmad.mursyid@sekolah.com,PKN,Senin,07:30,09:00
+XII DPB,sundariya@sekolah.com,PAI,Senin,09:00,11:30
+XII DPB,pramatagi.flosyandini@sekolah.com,Menjahit,Selasa,07:00,08:30
+XII DPB,pramatagi.flosyandini@sekolah.com,Menjahit,Selasa,08:30,10:00
+XII DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Selasa,10:00,11:30
+XII DPB,rahmat.hidayat@sekolah.com,Matematika,Rabu,07:00,08:30
+XII DPB,rahmat.hidayat@sekolah.com,Matematika,Rabu,08:30,10:00
+XII DPB,agesta.ameliya@sekolah.com,Pilihan,Rabu,10:00,11:30
+XII DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Kamis,07:00,08:30
+XII DPB,silvia.dwi@sekolah.com,Bahasa Inggris,Kamis,08:30,10:00
+XII DPB,maratul.azizeh@sekolah.com,PKK,Kamis,10:00,11:30
