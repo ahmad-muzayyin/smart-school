@@ -29,6 +29,7 @@ model Tenant {
   subjects          Subject[]
   grades            Grade[]
   teachingMaterials TeachingMaterial[]
+  @@map("tenant")
 }
 
 enum Role {
@@ -58,6 +59,7 @@ model User {
   schedulesAsTeacher Schedule[]
   grades             Grade[]
   teachingMaterials  TeachingMaterial[]
+  @@map("user")
 }
 
 model Class {
@@ -72,6 +74,7 @@ model Class {
   students   User[]
   attendance Attendance[]
   grades     Grade[]
+  @@map("class")
 }
 
 model Subject {
@@ -85,6 +88,7 @@ model Subject {
 
   tenant   Tenant @relation(fields: [tenantId], references: [id])
   teachers User[]
+  @@map("subject")
 }
 
 model Schedule {
@@ -104,6 +108,7 @@ model Schedule {
   teacher    User         @relation(fields: [teacherId], references: [id])
   attendance Attendance[]
   grades     Grade[]
+  @@map("schedule")
 }
 
 enum AttendanceStatus {
@@ -131,6 +136,7 @@ model Attendance {
   class    Class    @relation(fields: [classId], references: [id])
 
   @@unique([scheduleId, studentId, date])
+  @@map("attendance")
 }
 
 // NEW: Grade Model
@@ -157,6 +163,7 @@ model Grade {
   @@unique([studentId, scheduleId, category, semester])
   @@index([tenantId, classId, subject, semester])
   @@index([tenantId, studentId, semester])
+  @@map("grade")
 }
 
 // NEW: Teaching Material Model
@@ -182,4 +189,5 @@ model TeachingMaterial {
 
   @@index([tenantId, teacherId, subject])
   @@index([tenantId, classId, subject])
+  @@map("teachingmaterial")
 }

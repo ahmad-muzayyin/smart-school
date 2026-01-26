@@ -72,14 +72,21 @@ export const useAuthStore = create<AuthState>()(
                     console.error('Login Error detailed:', err);
                     let message = 'Login failed';
 
+                    // Attempt to extract the target URL for debugging context
+                    const baseURL = err.config?.baseURL || '';
+                    const url = err.config?.url || '';
+                    const fullUrl = baseURL ? `${baseURL}${url}` : url;
+
                     if (err.response) {
-                        // Server responded with error code
-                        message = err.response.data?.message || `Server error (${err.response.status})`;
+                        // Server responded with error code (4xx, 5xx)
+                        message = err.response.data?.message || `Server Error (${err.response.status}). Please try again.`;
                     } else if (err.request) {
-                        // Request made but no response (Network error)
-                        message = 'Unable to connect to server. Check your internet or server status.';
+                        // Request made but no response (Network error, Timeout, etc.)
+                        // This is common when IP is wrong, server is down, or firewall blocks it.
+                        message = `Koneksi Gagal!\n\nTidak dapat menghubungi server di:\n${fullUrl || 'URL tidak diketahui'}\n\nDetail Error: ${err.message}\n\nSolusi:\n1. Pastikan server Backend berjalan.\n2. Pastikan IP Address di client.ts benar.\n3. Pastikan HP dan Server di jaringan yang sama (jika lokal).`;
                     } else {
-                        message = err.message;
+                        // Other errors (setup, etc.)
+                        message = `Terjadi Kesalahan: ${err.message}`;
                     }
 
                     set({ error: message, isLoading: false });

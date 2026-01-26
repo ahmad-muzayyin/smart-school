@@ -25,18 +25,25 @@ client.interceptors.request.use(async (config) => {
 client.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (!error.response) {
-            // Network error (no response received)
-            // Modify the error message to be more user-friendly
-            error.message = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda atau pastikan server berjalan.';
-        } else {
-            // Use server provided error message if available
-            if (error.response.data && error.response.data.message) {
-                error.message = error.response.data.message;
-            }
+        // Log the error for debugging
+        if (error.config) {
+            console.log(`API Error [${error.config.method?.toUpperCase()} ${error.config.url}]:`, error.message);
         }
 
-        // Handle 401 (Logout) if needed
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log('Response Data:', error.response.data);
+            console.log('Response Status:', error.response.status);
+        } else if (error.request) {
+            // The request was made but no response was received
+            console.log('No response received (Network Error)');
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error Config:', error.message);
+        }
+
+        // Pass the error through so the store can handle it specifically
         return Promise.reject(error);
     }
 );
