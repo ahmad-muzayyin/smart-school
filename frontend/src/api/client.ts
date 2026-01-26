@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 // Use your machine's local IP address for physical device access
-const IP_ADDRESS = '192.168.1.144';
+const IP_ADDRESS = '34.126.121.250';
 const BASE_URL = `http://${IP_ADDRESS}:3000/api`;
 
 const client = axios.create({
