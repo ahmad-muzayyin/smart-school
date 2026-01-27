@@ -85,6 +85,34 @@ export const submitAttendance = catchAsync(async (req: Request, res: Response, n
     res.status(200).json({ status: 'success', data: { attendance: result } });
 });
 
+export const createPermission = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId = req.user!.tenantId!;
+    const userId = req.user!.id;
+    const userRole = req.user!.role;
+
+    if (userRole !== Role.STUDENT) {
+        return next(new AppError('Only students can request permission', 403));
+    }
+
+    const { date, reason, notes } = req.body; // reason: "Sakit", "Izin", etc.
+
+    if (!date || !reason) {
+        return next(new AppError('Date and Reason are required', 400));
+    }
+
+    const dateObj = new Date(date);
+    dateObj.setUTCHours(0, 0, 0, 0);
+
+    // Call service to create attendance records for all schedules on that day
+    const count = await attendanceService.createPermissionForDay(tenantId, userId, dateObj, reason, notes);
+
+    res.status(201).json({
+        status: 'success',
+        message: `Permission submitted for ${count} classes`,
+        data: { count }
+    });
+});
+
 export const getAttendance = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const tenantId = req.user!.tenantId!;
     let filters: any = {};

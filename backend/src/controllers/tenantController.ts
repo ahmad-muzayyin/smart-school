@@ -67,6 +67,9 @@ const updateTenantSchema = z.object({
     website: z.union([z.string().url(), z.literal('')]).optional(),
     logo: z.string().optional(),
     isActive: z.boolean().optional(),
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
+    allowedRadius: z.number().int().optional(),
 });
 
 export const updateTenant = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

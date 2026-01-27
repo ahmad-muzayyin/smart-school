@@ -23,61 +23,63 @@ export default function ScanAttendanceScreen({ route, navigation }: any) {
         getCameraPermissions();
     }, []);
 
+    const [lastScannedName, setLastScannedName] = useState<string | null>(null);
+    const [scanStatus, setScanStatus] = useState<'success' | 'error' | null>(null);
+
     const handleBarCodeScanned = async ({ type, data }: any) => {
+        if (processing || scanned) return;
+
         setScanned(true);
         setProcessing(true);
+        setScanStatus(null);
+        setLastScannedName(null);
 
         try {
-            // Data is expected to be the student ID
             const studentId = data;
 
-            // Submit attendance
-            const res = await client.post('/attendance', {
+            await client.post('/attendance', {
                 scheduleId,
                 studentId,
                 date: new Date().toISOString(),
                 status: 'PRESENT'
             });
 
-            const studentName = res.data.data.attendance.student?.name || 'Siswa';
+            // Fetch student info if needed, or backend returns it
+            // Assuming backend returns student name in response structure
+            // For now, let's assume successful 200 OK means it worked. 
+            // We can try to fetch the name if we want, or just say "Berhasil"
+            // Actually, in previous code: res.data.data.attendance.student?.name
 
-            Alert.alert(
-                'Berhasil!',
-                `Absensi berhasil untuk ${studentName}`,
-                [
-                    {
-                        text: 'Scan Lagi',
-                        onPress: () => {
-                            setScanned(false);
-                            setProcessing(false);
-                        }
-                    },
-                    {
-                        text: 'Selesai',
-                        onPress: () => navigation.goBack(),
-                        style: 'cancel'
-                    }
-                ]
-            );
+            // Let's re-fetch or trust valid ID. 
+            // To be safe and fast:
+            const res = await client.get(`/users/${studentId}`);
+            const studentName = res.data.data.user.name;
+
+            setProcessing(false); // Stop processing indicator before showing feedback
+            setLastScannedName(studentName);
+            setScanStatus('success');
+
+            // Auto reset after 1.5 seconds for next scan
+            setTimeout(() => {
+                setScanned(false);
+                setScanStatus(null);
+                setLastScannedName(null);
+            }, 1500);
 
         } catch (error: any) {
             console.error(error);
-            const message = error.response?.data?.message || 'Gagal memproses absensi';
-            Alert.alert(
-                'Gagal',
-                message,
-                [
-                    {
-                        text: 'Coba Lagi',
-                        onPress: () => {
-                            setScanned(false);
-                            setProcessing(false);
-                        }
-                    }
-                ]
-            );
-        } finally {
-            setProcessing(false);
+            const message = error.response?.data?.message || 'Gagal';
+
+            setProcessing(false); // Stop processing indicator before showing feedback
+            setLastScannedName(message); // Re-purpose for error message
+            setScanStatus('error');
+
+            // Auto reset after 2 seconds
+            setTimeout(() => {
+                setScanned(false);
+                setScanStatus(null);
+                setLastScannedName(null);
+            }, 2000);
         }
     };
 
@@ -125,8 +127,29 @@ export default function ScanAttendanceScreen({ route, navigation }: any) {
                 />
 
                 <View style={styles.overlay}>
-                    <View style={styles.scanBox} />
-                    <Text style={styles.hint}>Arahkan barcode siswa ke dalam kotak</Text>
+                    <View style={[
+                        styles.scanBox,
+                        scanStatus === 'success' && { borderColor: colors.success },
+                        scanStatus === 'error' && { borderColor: colors.error }
+                    ]} />
+
+                    {!scanStatus && <Text style={styles.hint}>Arahkan barcode siswa ke dalam kotak</Text>}
+
+                    {scanStatus === 'success' && (
+                        <View style={styles.feedbackContainer}>
+                            <Ionicons name="checkmark-circle" size={48} color={colors.success} />
+                            <Text style={styles.feedbackTitle}>Berhasil!</Text>
+                            <Text style={styles.feedbackText}>{lastScannedName}</Text>
+                        </View>
+                    )}
+
+                    {scanStatus === 'error' && (
+                        <View style={styles.feedbackContainer}>
+                            <Ionicons name="close-circle" size={48} color={colors.error} />
+                            <Text style={[styles.feedbackTitle, { color: colors.error }]}>Gagal</Text>
+                            <Text style={styles.feedbackText}>{lastScannedName}</Text>
+                        </View>
+                    )}
                 </View>
 
                 {processing && (
@@ -210,5 +233,26 @@ const styles = StyleSheet.create({
         color: 'white',
         marginTop: 10,
         fontSize: 16
+    },
+    feedbackContainer: {
+        position: 'absolute',
+        top: '60%',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        borderRadius: 16,
+        width: '80%'
+    },
+    feedbackTitle: {
+        color: colors.success,
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginTop: 10
+    },
+    feedbackText: {
+        color: 'white',
+        fontSize: 18,
+        textAlign: 'center',
+        marginTop: 5
     }
 });

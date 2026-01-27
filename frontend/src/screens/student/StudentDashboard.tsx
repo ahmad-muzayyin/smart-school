@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +18,7 @@ const { width } = Dimensions.get('window');
 export default function StudentDashboard({ navigation }: any) {
     const { user, logout } = useAuthStore();
     const [attendanceHistory, setAttendanceHistory] = useState<any[]>([]);
-    const [stats, setStats] = useState({ present: 0, absent: 0, late: 0, total: 0 });
+    const [stats, setStats] = useState({ present: 0, absent: 0, late: 0, excused: 0, total: 0 });
     const [loading, setLoading] = useState(true);
 
     const { isDarkMode } = useThemeStore();
@@ -31,18 +32,20 @@ export default function StudentDashboard({ navigation }: any) {
         setLoading(true);
         try {
             const res = await client.get('/attendance');
-            const history = res.data.data.history;
+            const history = res.data.data.attendance || [];
             setAttendanceHistory(history);
 
             // Calculate stats
             const present = history.filter((a: any) => a.status === 'PRESENT').length;
             const absent = history.filter((a: any) => a.status === 'ABSENT').length;
             const late = history.filter((a: any) => a.status === 'LATE').length;
+            const excused = history.filter((a: any) => a.status === 'EXCUSED').length;
 
             setStats({
                 present,
                 absent,
                 late,
+                excused,
                 total: history.length
             });
         } catch (error) {
@@ -107,9 +110,9 @@ export default function StudentDashboard({ navigation }: any) {
             >
                 <View style={styles.headerContent}>
                     <View>
-                        <Text style={styles.greeting}>Halo,</Text>
+                        <Text style={styles.greeting}>{user?.tenant?.name || 'Sekolah'}</Text>
                         <Text style={styles.studentName}>{user?.name}</Text>
-                        <Text style={styles.studentClass}>Kelas {user?.class?.name || '-'}</Text>
+                        <Text style={styles.studentClass}>Kelas {user?.className || user?.class?.name || '-'}</Text>
                     </View>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>{user?.name?.charAt(0)}</Text>
@@ -122,22 +125,61 @@ export default function StudentDashboard({ navigation }: any) {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
+                {/* Quick Menu */}
+                <View style={[styles.menuContainer, { marginBottom: spacing.lg }]}>
+                    <TouchableOpacity
+                        style={[styles.menuItem, { backgroundColor: colors.surface }]}
+                        onPress={() => navigation.navigate('StudentMaterials')}
+                    >
+                        <View style={[styles.menuIcon, { backgroundColor: colors.primary + '20' }]}>
+                            <Ionicons name="book" size={24} color={colors.primary} />
+                        </View>
+                        <Text style={[styles.menuText, { color: colors.text }]}>Materi & Tugas</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.menuItem, { backgroundColor: colors.surface }]}
+                        onPress={() => navigation.navigate('StudentPermission')}
+                    >
+                        <View style={[styles.menuIcon, { backgroundColor: '#F59E0B20' }]}>
+                            <Ionicons name="hand-right" size={24} color="#F59E0B" />
+                        </View>
+                        <Text style={[styles.menuText, { color: colors.text }]}>Izin/Sakit</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.menuItem, { backgroundColor: colors.surface }]}
+                        // onPress={() => navigation.navigate('StudentSchedule')} // Future feature
+                        onPress={() => alert('Fitur Jadwal akan segera hadir!')}
+                    >
+                        <View style={[styles.menuIcon, { backgroundColor: colors.textSecondary + '20' }]}>
+                            <Ionicons name="calendar" size={24} color={colors.textSecondary} />
+                        </View>
+                        <Text style={[styles.menuText, { color: colors.text }]}>Jadwal</Text>
+                    </TouchableOpacity>
+                </View>
+
                 {/* Stats Cards */}
                 <View style={styles.statsContainer}>
-                    <View style={[styles.statCard, { backgroundColor: colors.successBackground }]}>
+                    <View style={[styles.statCard, { backgroundColor: colors.surface, borderTopColor: colors.success }]}>
                         <Ionicons name="checkmark-circle" size={24} color={colors.success} />
                         <Text style={[styles.statNumber, { color: colors.text }]}>{stats.present}</Text>
                         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Hadir</Text>
                     </View>
-                    <View style={[styles.statCard, { backgroundColor: colors.warningBackground }]}>
+                    <View style={[styles.statCard, { backgroundColor: colors.surface, borderTopColor: colors.warning }]}>
                         <Ionicons name="time" size={24} color={colors.warning} />
                         <Text style={[styles.statNumber, { color: colors.text }]}>{stats.late}</Text>
                         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Terlambat</Text>
                     </View>
-                    <View style={[styles.statCard, { backgroundColor: colors.errorBackground }]}>
+                    <View style={[styles.statCard, { backgroundColor: colors.surface, borderTopColor: colors.error }]}>
                         <Ionicons name="close-circle" size={24} color={colors.error} />
                         <Text style={[styles.statNumber, { color: colors.text }]}>{stats.absent}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Tidak Hadir</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Absen</Text>
+                    </View>
+                    <View style={[styles.statCard, { backgroundColor: colors.surface, borderTopColor: '#6B7280' }]}>
+                        <Ionicons name="flag" size={24} color="#6B7280" />
+                        <Text style={[styles.statNumber, { color: colors.text }]}>{stats.excused}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Izin</Text>
                     </View>
                 </View>
 
@@ -192,7 +234,7 @@ export default function StudentDashboard({ navigation }: any) {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     header: {
-        paddingTop: 60,
+        paddingTop: Platform.OS === 'android' ? 70 : 60, // Safe area
         paddingBottom: 30,
         paddingHorizontal: spacing.lg,
         borderBottomLeftRadius: 24,
@@ -220,21 +262,60 @@ const styles = StyleSheet.create({
     content: { flex: 1 },
     scrollContent: { padding: spacing.lg, paddingBottom: 40 },
 
+    menuContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 4, // Reduce native margin
+        justifyContent: 'space-between',
+        marginBottom: spacing.md
+    },
+    menuItem: {
+        width: (Dimensions.get('window').width - 48 - 24) / 3, // 3 Columns
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.sm,
+        backgroundColor: 'white', // Default surface
+        borderRadius: 16,
+        ...shadows.sm,
+        elevation: 2
+    },
+    menuIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8
+    },
+    menuText: {
+        fontSize: 12,
+        fontWeight: '600',
+        textAlign: 'center',
+        color: '#1F2937' // Default text
+    },
+
     statsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: spacing.xl,
+        justifyContent: 'space-between', // Spread evenly
+        marginBottom: spacing.lg,
     },
     statCard: {
-        flex: 1,
-        marginHorizontal: 4,
-        padding: spacing.md,
-        borderRadius: layout.borderRadius.md,
+        flex: 1, // Distribute equal width
+        marginHorizontal: 4, // Small gap
+        backgroundColor: 'white',
+        paddingVertical: 12,
+        paddingHorizontal: 2, // Minimal horizontal padding
+        borderRadius: 12,
         alignItems: 'center',
-        ...shadows.sm
+        justifyContent: 'center',
+        ...shadows.sm,
+        borderTopWidth: 3, // Change to top border for compact vertical layout
+        borderLeftWidth: 0, // Remove side border
+        elevation: 2,
+        height: 80
     },
-    statNumber: { fontSize: 24, fontWeight: 'bold', marginTop: 8 },
-    statLabel: { fontSize: 11, marginTop: 4 },
+    statNumber: { fontSize: 16, fontWeight: 'bold', marginTop: 4, color: defaultColors.text },
+    statLabel: { fontSize: 10, marginTop: 2, color: defaultColors.textSecondary },
 
     section: { marginBottom: spacing.xl },
     sectionTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: spacing.md },

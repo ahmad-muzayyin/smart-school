@@ -45,6 +45,22 @@ export const getMaterials = catchAsync(async (req: Request, res: Response, next:
         filters.teacherId = req.query.teacherId;
     }
 
+    if (userRole === 'STUDENT') {
+        const student = req.user as any;
+        const studentClassId = student.classId;
+
+        // Student logic:
+        // Must match tenant (already filtered)
+        // AND (classId = studentClassId OR isPublic = true)
+
+        // Since Prisma where input is cleaner with direct properties or OR,
+        // we might handle this logic in service or modify filters here.
+        // For simplicity, let's pass a special 'studentAccess' filter
+        filters.studentAccess = {
+            classId: studentClassId
+        };
+    }
+
     if (req.query.classId) {
         filters.classId = req.query.classId;
     }

@@ -95,6 +95,12 @@ export default function AdminProfileScreen({ navigation }: any) {
                     <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Pengaturan Aplikasi</Text>
                     <View style={[styles.card, { backgroundColor: colors.surface }]}>
                         <MenuItem
+                            icon="location-outline"
+                            label="Lokasi Sekolah"
+                            onPress={() => navigation.navigate('SchoolSettings')}
+                        />
+                        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                        <MenuItem
                             icon="language-outline"
                             label="Bahasa"
                             value="Indonesia"

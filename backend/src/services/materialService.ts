@@ -34,7 +34,12 @@ export const getMaterials = async (tenantId: string, filters: any = {}) => {
     return await prisma.teachingMaterial.findMany({
         where: {
             tenantId,
-            ...filters
+            ...(filters.studentAccess ? {
+                OR: [
+                    { isPublic: true },
+                    { classId: filters.studentAccess.classId }
+                ]
+            } : filters)
         },
         include: {
             teacher: {

@@ -19,6 +19,7 @@ import CreateScheduleScreen from '../screens/admin/CreateScheduleScreen';
 import ViewSchedulesScreen from '../screens/admin/ViewSchedulesScreen';
 import AttendanceReportScreen from '../screens/admin/AttendanceReportScreen';
 import ManageSubjectsScreen from '../screens/admin/ManageSubjectsScreen';
+import SchoolSettingsScreen from '../screens/admin/SchoolSettingsScreen';
 
 // Teacher
 import TeacherTabNavigator from './TeacherTabNavigator';
@@ -31,6 +32,8 @@ import ScanAttendanceScreen from '../screens/teacher/ScanAttendanceScreen';
 
 // Student
 import StudentDashboard from '../screens/student/StudentDashboard';
+import StudentMaterialsScreen from '../screens/student/StudentMaterialsScreen';
+import StudentPermissionScreen from '../screens/student/StudentPermissionScreen';
 
 // Common
 import SettingsScreen from '../screens/common/SettingsScreen';
@@ -93,6 +96,7 @@ export default function RootNavigator() {
                                 <Stack.Screen name="ViewSchedules" component={ViewSchedulesScreen} />
                                 <Stack.Screen name="AttendanceReport" component={AttendanceReportScreen} />
                                 <Stack.Screen name="ManageSubjects" component={ManageSubjectsScreen} />
+                                <Stack.Screen name="SchoolSettings" component={SchoolSettingsScreen} />
                                 {/* Common Screens */}
                                 <Stack.Screen name="Settings" component={SettingsScreen} />
                                 <Stack.Screen name="Help" component={HelpScreen} />
@@ -125,7 +129,11 @@ export default function RootNavigator() {
                             </>
                         )}
                         {user?.role === 'STUDENT' && (
-                            <Stack.Screen name="StudentDashboard" component={StudentDashboard} />
+                            <>
+                                <Stack.Screen name="StudentDashboard" component={StudentDashboard} />
+                                <Stack.Screen name="StudentMaterials" component={StudentMaterialsScreen} />
+                                <Stack.Screen name="StudentPermission" component={StudentPermissionScreen} />
+                            </>
                         )}
                     </>
                 )}

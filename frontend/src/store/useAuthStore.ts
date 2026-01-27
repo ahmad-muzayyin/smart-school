@@ -16,11 +16,15 @@ interface User {
         name: string;
         isActive?: boolean;
     };
+    class?: {
+        name: string;
+    };
     subjects?: {
         id: string;
         name: string;
         code?: string;
     }[];
+    className?: string; // Flattened for easier access
 }
 
 interface AuthState {

@@ -24,6 +24,11 @@ export const login = async (email: string, password: string) => { // Removed ten
                     id: true,
                     name: true
                 }
+            },
+            class: {
+                select: {
+                    name: true
+                }
             }
         }
     });
@@ -42,7 +47,12 @@ export const login = async (email: string, password: string) => { // Removed ten
     const token = signToken(user.id);
     const { password: _, ...userWithoutPassword } = user;
 
-    return { token, user: userWithoutPassword };
+    const userWithClassName = {
+        ...userWithoutPassword,
+        className: user.class?.name
+    };
+
+    return { token, user: userWithClassName };
 };
 
 export const updatePassword = async (userId: string, currentPassword: string, newPassword: string) => {

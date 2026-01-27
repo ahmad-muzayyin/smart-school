@@ -12,5 +12,6 @@ router.use(requireTenant);
 router.post('/', restrictTo(Role.TEACHER, Role.SCHOOL_ADMIN), attendanceController.submitAttendance);
 router.get('/', attendanceController.getAttendance);
 router.get('/export', attendanceController.exportAttendance);
+router.post('/permission', restrictTo(Role.STUDENT), attendanceController.createPermission);
 
 export default router;

@@ -22,6 +22,10 @@ model Tenant {
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true)
 
+  latitude      Float?
+  longitude     Float?
+  allowedRadius Int      @default(100)
+
   users             User[]
   classes           Class[]
   schedules         Schedule[]
@@ -29,6 +33,8 @@ model Tenant {
   subjects          Subject[]
   grades            Grade[]
   teachingMaterials TeachingMaterial[]
+  TeacherAttendance TeacherAttendance[]
+
   @@map("tenant")
 }
 
@@ -51,14 +57,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant             Tenant?            @relation(fields: [tenantId], references: [id])
-  class              Class?             @relation(fields: [classId], references: [id])
+  tenant                   Tenant?             @relation(fields: [tenantId], references: [id])
+  class                    Class?              @relation(fields: [classId], references: [id])
   // subject relation removed
-  subjects           Subject[]          // Many-to-Many relation
-  attendanceRecords  Attendance[]
-  schedulesAsTeacher Schedule[]
-  grades             Grade[]
-  teachingMaterials  TeachingMaterial[]
+  subjects                 Subject[] // Many-to-Many relation
+  attendanceRecords        Attendance[]
+  schedulesAsTeacher       Schedule[]
+  grades                   Grade[]
+  teachingMaterials        TeachingMaterial[]
+  teacherAttendanceRecords TeacherAttendance[]
+
   @@map("user")
 }
 
@@ -74,6 +82,7 @@ model Class {
   students   User[]
   attendance Attendance[]
   grades     Grade[]
+
   @@map("class")
 }
 
@@ -88,6 +97,7 @@ model Subject {
 
   tenant   Tenant @relation(fields: [tenantId], references: [id])
   teachers User[]
+
   @@map("subject")
 }
 
@@ -108,6 +118,7 @@ model Schedule {
   teacher    User         @relation(fields: [teacherId], references: [id])
   attendance Attendance[]
   grades     Grade[]
+
   @@map("schedule")
 }
 
@@ -190,4 +201,35 @@ model TeachingMaterial {
   @@index([tenantId, teacherId, subject])
   @@index([tenantId, classId, subject])
   @@map("teachingmaterial")
+}
+
+model TeacherAttendance {
+  id        String           @id @default(uuid())
+  tenantId  String
+  teacherId String
+  date      DateTime         @db.Date
+  status    AttendanceStatus
+
+  checkInTime    DateTime?
+  checkInLat     Float?
+  checkInLong    Float?
+  checkInPhoto   String?
+  checkInAddress String?
+
+  checkOutTime    DateTime?
+  checkOutLat     Float?
+  checkOutLong    Float?
+  checkOutPhoto   String?
+  checkOutAddress String?
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant  Tenant @relation(fields: [tenantId], references: [id])
+  teacher User   @relation(fields: [teacherId], references: [id])
+
+  @@unique([teacherId, date])
+  @@index([tenantId, teacherId, date])
+  @@map("teacher_attendance")
 }

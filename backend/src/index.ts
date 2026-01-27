@@ -14,6 +14,7 @@ import attendanceRoutes from './routes/attendanceRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 import gradeRoutes from './routes/gradeRoutes';
 import materialRoutes from './routes/materialRoutes';
+import teacherAttendanceRoutes from './routes/teacherAttendanceRoutes';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/teacher-attendance', teacherAttendanceRoutes);
 
 // 404
 app.all('*', (req, res, next) => {

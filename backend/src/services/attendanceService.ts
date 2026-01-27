@@ -101,3 +101,73 @@ export const getStudentForValidation = async (tenantId: string, studentId: strin
         }
     });
 };
+
+export const createPermissionForDay = async (tenantId: string, studentId: string, date: Date, reason: string, notes?: string) => {
+    // 1. Get student's class
+    const student = await prisma.user.findUnique({
+        where: { id: studentId },
+        select: { classId: true }
+    });
+
+    if (!student || !student.classId) {
+        throw new Error('Student not found or not assigned to a class');
+    }
+
+    // 2. Find all schedules for this class on this day of week
+    const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay(); // 1-7 (Mon-Sun). JS getDay is 0 (Sun) to 6 (Sat)
+    // If backend uses 1=Mon...7=Sun
+    // Check Schedule model? Assuming standard 1=Mon.
+
+    // JS: 0=Sun, 1=Mon, 2=Tue...
+    // Let's assume standard ISO: 1-7. If Sunday(0) -> 7.
+
+    const schedules = await prisma.schedule.findMany({
+        where: {
+            tenantId,
+            classId: student.classId,
+            dayOfWeek: dayOfWeek
+        }
+    });
+
+    if (schedules.length === 0) {
+        return 0; // No schedules, nothing to mark
+    }
+
+    // 3. Upsert attendance for all schedules
+    // Status is EXCUSED. Notes will contain reason + user notes
+    const finalNotes = `[${reason}] ${notes || ''}`;
+
+    let count = 0;
+
+    // Prisma doesn't have createMany with upsert logic easily for different IDs. 
+    // Loop transaction is safer.
+    await prisma.$transaction(async (tx) => {
+        for (const sched of schedules) {
+            await tx.attendance.upsert({
+                where: {
+                    scheduleId_studentId_date: {
+                        scheduleId: sched.id,
+                        studentId,
+                        date
+                    }
+                },
+                update: {
+                    status: 'EXCUSED',
+                    notes: finalNotes
+                },
+                create: {
+                    tenantId,
+                    scheduleId: sched.id,
+                    studentId,
+                    classId: student.classId!,
+                    date,
+                    status: 'EXCUSED',
+                    notes: finalNotes
+                }
+            });
+            count++;
+        }
+    });
+
+    return count;
+};

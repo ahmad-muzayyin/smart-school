@@ -12,6 +12,7 @@ import { IdentityCard } from '../../components/common/IdentityCard';
 import { colors as defaultColors, layout, spacing, typography, shadows, palette, getThemeColors } from '../../theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeStore } from '../../store/useThemeStore';
+import QRCode from 'qrcode';
 
 export default function ManageUsersScreen({ route, navigation }: any) {
     const { role, tenantId } = route.params; // 'TEACHER' or 'STUDENT', optional tenantId for Owner
@@ -225,6 +226,8 @@ export default function ManageUsersScreen({ route, navigation }: any) {
         setCardModalVisible(true);
     };
 
+
+
     const generateBulkPDF = async () => {
         if (filteredUsers.length === 0) {
             Alert.alert('Info', 'Tidak ada siswa untuk dicetak (sesuai filter aktif)');
@@ -234,15 +237,27 @@ export default function ManageUsersScreen({ route, navigation }: any) {
         try {
             Alert.alert('Memproses...', `Membuat PDF untuk ${filteredUsers.length} siswa`);
 
-            const htmlPages = filteredUsers.map((student: any) => `
+            // Generate HTML pages asynchronously first
+            const htmlPagesArray = await Promise.all(filteredUsers.map(async (student: any) => {
+                // Generate QR Code SVG locally
+                const qrSvg = await QRCode.toString(student.id, {
+                    type: 'svg',
+                    margin: 1,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
+                    }
+                });
+
+                return `
                 <div style="page-break-after: always; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; box-sizing: border-box;">
                     <div style="background: white; border-radius: 20px; padding: 30px; width: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
                             <h1 style="margin: 0; font-size: 24px; font-weight: bold;">KARTU PELAJAR</h1>
                             <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">SMA Global Madani</p>
                         </div>
-                        <div style="margin: 20px 0;">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${student.id}" style="width: 200px; height: 200px; border: 3px solid #667eea; border-radius: 10px;" />
+                        <div style="margin: 20px auto; width: 200px; height: 200px; border: 3px solid #667eea; border-radius: 10px; overflow: hidden; display: flex; align-items: justify; justify-content: center;">
+                            ${qrSvg}
                         </div>
                         <div style="text-align: left; padding: 0 10px;">
                             <div style="margin-bottom: 15px;">
@@ -263,7 +278,10 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }));
+
+            const htmlPages = htmlPagesArray.join('');
 
             const html = `
                 <!DOCTYPE html>
@@ -273,6 +291,7 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                     <style>
                         @page { margin: 0; }
                         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+                        svg { width: 100%; height: 100%; } 
                     </style>
                 </head>
                 <body>
@@ -282,11 +301,20 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             `;
 
             const { uri } = await Print.printToFileAsync({ html });
-            await Sharing.shareAsync(uri);
-            Alert.alert('Berhasil', 'PDF berhasil dibuat dan siap dibagikan');
-        } catch (error) {
+
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(uri, {
+                    UTI: '.pdf',
+                    mimeType: 'application/pdf',
+                });
+                Alert.alert('Berhasil', 'PDF berhasil dibuat dan siap dibagikan');
+            } else {
+                Alert.alert('Info', 'Fitur sharing tidak tersedia');
+            }
+
+        } catch (error: any) {
             console.error('Error generating PDF:', error);
-            Alert.alert('Gagal', 'Terjadi kesalahan saat membuat PDF');
+            Alert.alert('Gagal', `Terjadi kesalahan saat membuat PDF: ${error.message || error}`);
         }
     };
 

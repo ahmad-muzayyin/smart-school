@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Maju Bersama Tingkatkan Prestasi",
+    "name": "SMART SCHOOL",
     "slug": "smart-school-attendance",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -37,7 +37,27 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Izinkan aplikasi mengakses kamera untuk mengambil foto kehadiran."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Izinkan aplikasi mengakses lokasi untuk memverifikasi kehadiran Anda."
+        }
+      ]
     ],
     "extra": {
       "eas": {

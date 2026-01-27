@@ -8,6 +8,7 @@ import { colors, palette, shadows } from '../theme/theme';
 import TeacherDashboard from '../screens/teacher/TeacherDashboard';
 import TeacherScheduleScreen from '../screens/teacher/TeacherScheduleScreen';
 import TeacherProfileScreen from '../screens/teacher/TeacherProfileScreen';
+import TeacherAttendanceScreen from '../screens/teacher/TeacherAttendanceScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +51,8 @@ export default function TeacherTabNavigator() {
                         iconName = focused ? 'calendar' : 'calendar-outline';
                     } else if (route.name === 'Profil') {
                         iconName = focused ? 'person' : 'person-outline';
+                    } else if (route.name === 'Absen') {
+                        iconName = focused ? 'location' : 'location-outline';
                     }
 
                     return <Ionicons name={iconName} size={24} color={color} />;
@@ -58,6 +61,7 @@ export default function TeacherTabNavigator() {
         >
             <Tab.Screen name="Beranda" component={TeacherDashboard} />
             <Tab.Screen name="Jadwal" component={TeacherScheduleScreen} />
+            <Tab.Screen name="Absen" component={TeacherAttendanceScreen} />
             <Tab.Screen name="Profil" component={TeacherProfileScreen} />
         </Tab.Navigator>
     );
