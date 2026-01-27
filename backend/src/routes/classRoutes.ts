@@ -21,11 +21,6 @@ router.post('/import-schedules', restrictTo(Role.SCHOOL_ADMIN, Role.OWNER), uplo
 router.get('/export-schedules', restrictTo(Role.SCHOOL_ADMIN, Role.OWNER), classController.exportSchedules);
 
 
-router.route('/:id')
-    .get(restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.STUDENT), classController.getClassById)
-    .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateClass)
-    .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteClass);
-
 router.route('/schedules')
     .post(restrictTo(Role.SCHOOL_ADMIN), classController.createSchedule)
     .get(classController.getTodaySchedule); // Accessible by Teacher, Student, Admin
@@ -34,5 +29,10 @@ router.route('/schedules/:id')
     .get(classController.getScheduleById) // Accessible by all authenticated users
     .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateSchedule)
     .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteSchedule);
+
+router.route('/:id')
+    .get(restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.STUDENT), classController.getClassById)
+    .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateClass)
+    .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteClass);
 
 export default router;
