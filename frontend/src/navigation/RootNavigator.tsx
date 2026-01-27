@@ -34,6 +34,7 @@ import ScanAttendanceScreen from '../screens/teacher/ScanAttendanceScreen';
 import StudentDashboard from '../screens/student/StudentDashboard';
 import StudentMaterialsScreen from '../screens/student/StudentMaterialsScreen';
 import StudentPermissionScreen from '../screens/student/StudentPermissionScreen';
+import StudentScheduleScreen from '../screens/student/StudentScheduleScreen';
 
 // Common
 import SettingsScreen from '../screens/common/SettingsScreen';
@@ -133,6 +134,7 @@ export default function RootNavigator() {
                                 <Stack.Screen name="StudentDashboard" component={StudentDashboard} />
                                 <Stack.Screen name="StudentMaterials" component={StudentMaterialsScreen} />
                                 <Stack.Screen name="StudentPermission" component={StudentPermissionScreen} />
+                                <Stack.Screen name="StudentSchedule" component={StudentScheduleScreen} />
                             </>
                         )}
                     </>

@@ -160,8 +160,7 @@ export default function StudentDashboard({ navigation }: any) {
 
                     <TouchableOpacity
                         style={[styles.menuItem, { backgroundColor: colors.surface }]}
-                        // onPress={() => navigation.navigate('StudentSchedule')} // Future feature
-                        onPress={() => alert('Fitur Jadwal akan segera hadir!')}
+                        onPress={() => navigation.navigate('StudentSchedule')} // Future feature
                     >
                         <View style={[styles.menuIcon, { backgroundColor: colors.textSecondary + '20' }]}>
                             <Ionicons name="calendar" size={24} color={colors.textSecondary} />
