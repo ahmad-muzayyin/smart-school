@@ -29,6 +29,12 @@ export const getAllClasses = async (tenantId: string) => {
     });
 };
 
+export const getClassById = async (tenantId: string, classId: string) => {
+    return await prisma.class.findFirst({
+        where: { id: classId, tenantId },
+    });
+};
+
 export const updateClass = async (tenantId: string, classId: string, data: { name?: string, homeRoomTeacherId?: string | null }) => {
     // Verify class belongs to tenant
     const existingClass = await prisma.class.findFirst({

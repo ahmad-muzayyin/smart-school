@@ -21,10 +21,21 @@ export default function StudentDashboard({ navigation }: any) {
     const [stats, setStats] = useState({ present: 0, absent: 0, late: 0, excused: 0, total: 0 });
     const [loading, setLoading] = useState(true);
 
+    const [className, setClassName] = useState(user?.className || user?.class?.name || '-');
+
+    useEffect(() => {
+        if ((!user?.className && !user?.class?.name) && user?.classId) {
+            client.get(`/classes/${user.classId}`)
+                .then(res => setClassName(res.data.data.class.name))
+                .catch(err => console.log('Failed to fetch class name:', err));
+        }
+    }, [user]);
+
     const { isDarkMode } = useThemeStore();
     const colors = getThemeColors(isDarkMode);
 
     useEffect(() => {
+        console.log('User Data in Dashboard:', JSON.stringify(user, null, 2));
         fetchAttendanceHistory();
     }, []);
 
@@ -112,7 +123,7 @@ export default function StudentDashboard({ navigation }: any) {
                     <View>
                         <Text style={styles.greeting}>{user?.tenant?.name || 'Sekolah'}</Text>
                         <Text style={styles.studentName}>{user?.name}</Text>
-                        <Text style={styles.studentClass}>Kelas {user?.className || user?.class?.name || '-'}</Text>
+                        <Text style={styles.studentClass}>Kelas {className}</Text>
                     </View>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>{user?.name?.charAt(0)}</Text>

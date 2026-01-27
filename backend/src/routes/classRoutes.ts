@@ -22,6 +22,7 @@ router.get('/export-schedules', restrictTo(Role.SCHOOL_ADMIN, Role.OWNER), class
 
 
 router.route('/:id')
+    .get(restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.STUDENT), classController.getClassById)
     .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateClass)
     .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteClass);
 

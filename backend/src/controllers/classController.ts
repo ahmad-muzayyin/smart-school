@@ -58,6 +58,16 @@ export const updateClass = catchAsync(async (req: Request, res: Response, next: 
     res.status(200).json({ status: 'success', data: { class: updatedClass } });
 });
 
+export const getClassById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId = req.user!.tenantId!;
+    const { id } = req.params;
+    const classData = await classService.getClassById(tenantId, id);
+
+    if (!classData) return next(new AppError('Class not found', 404));
+
+    res.status(200).json({ status: 'success', data: { class: classData } });
+});
+
 export const deleteClass = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const tenantId = req.user!.tenantId!;
     const { id } = req.params;

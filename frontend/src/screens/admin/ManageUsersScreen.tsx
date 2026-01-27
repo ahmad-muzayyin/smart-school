@@ -41,6 +41,9 @@ export default function ManageUsersScreen({ route, navigation }: any) {
     const [selectedClassFilter, setSelectedClassFilter] = useState<string | null>(null);
     const [showClassFilterModal, setShowClassFilterModal] = useState(false);
 
+    const [showClassPicker, setShowClassPicker] = useState(false);
+    const [classSearchQuery, setClassSearchQuery] = useState('');
+
     const { isDarkMode } = useThemeStore();
     const colors = getThemeColors(isDarkMode);
 
@@ -732,14 +735,18 @@ export default function ManageUsersScreen({ route, navigation }: any) {
 
                         {role === 'STUDENT' && (
                             <View style={styles.formGroup}>
-                                <Text style={[styles.label, { color: colors.text }]}>ID Kelas (Opsional)</Text>
-                                <TextInput
-                                    placeholder="Masukkan ID Kelas"
-                                    placeholderTextColor={colors.textSecondary}
-                                    style={[styles.input, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
-                                    value={form.classId}
-                                    onChangeText={t => setForm({ ...form, classId: t })}
-                                />
+                                <Text style={[styles.label, { color: colors.text }]}>Kelas (Wajib)</Text>
+                                <View style={[styles.pickerContainer, { borderColor: colors.border, backgroundColor: colors.background }]}>
+                                    <TouchableOpacity
+                                        style={styles.picker}
+                                        onPress={() => setShowClassPicker(true)}
+                                    >
+                                        <Text style={form.classId ? [styles.pickerText, { color: colors.text }] : [styles.pickerPlaceholder, { color: colors.textSecondary }]}>
+                                            {form.classId ? classes.find(c => c.id === form.classId)?.name || form.classId : 'Pilih Kelas'}
+                                        </Text>
+                                        <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         )}
 
@@ -777,6 +784,84 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                 </View>
             </Modal>
 
+
+            {/* Class Picker Modal */}
+            <Modal visible={showClassPicker} animationType="slide" transparent onRequestClose={() => {
+                setShowClassPicker(false);
+                setClassSearchQuery('');
+            }}>
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>Pilih Kelas</Text>
+                            <TouchableOpacity onPress={() => {
+                                setShowClassPicker(false);
+                                setClassSearchQuery('');
+                            }}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: colors.surface,
+                            borderWidth: 1,
+                            borderColor: colors.border,
+                            borderRadius: 12,
+                            paddingHorizontal: 12,
+                            height: 44,
+                            marginBottom: 12
+                        }}>
+                            <Ionicons name="search" size={20} color={colors.textSecondary} style={{ marginRight: 8 }} />
+                            <TextInput
+                                style={{ flex: 1, fontSize: 14, color: colors.text }}
+                                placeholder="Cari Kelas..."
+                                value={classSearchQuery}
+                                onChangeText={setClassSearchQuery}
+                                placeholderTextColor={colors.textSecondary}
+                            />
+                            {classSearchQuery.length > 0 && (
+                                <TouchableOpacity onPress={() => setClassSearchQuery('')}>
+                                    <Ionicons name="close-circle" size={18} color={colors.textSecondary} />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+
+                        <FlatList
+                            data={classes.filter(c =>
+                                c.name.toLowerCase().includes(classSearchQuery.toLowerCase())
+                            )}
+                            keyExtractor={item => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[styles.modalItem, { borderBottomColor: colors.border }]}
+                                    onPress={() => {
+                                        setForm({ ...form, classId: item.id });
+                                        setShowClassPicker(false);
+                                        setClassSearchQuery('');
+                                    }}
+                                >
+                                    <View style={[styles.avatarContainer, { backgroundColor: defaultColors.primaryLight, width: 36, height: 36, marginRight: 12 }]}>
+                                        <Ionicons name="people-outline" size={18} color={defaultColors.primary} />
+                                    </View>
+                                    <View>
+                                        <Text style={[styles.modalItemText, { color: colors.text }]}>{item.name}</Text>
+                                    </View>
+                                    {form.classId === item.id && (
+                                        <Ionicons name="checkmark-circle" size={20} color={defaultColors.primary} style={{ marginLeft: 'auto' }} />
+                                    )}
+                                </TouchableOpacity>
+                            )}
+                            ListEmptyComponent={
+                                <View style={{ padding: 20, alignItems: 'center' }}>
+                                    <Text style={{ color: colors.textSecondary }}>Kelas tidak ditemukan</Text>
+                                </View>
+                            }
+                        />
+                    </View>
+                </View>
+            </Modal>
 
             {/* Subject Picker Modal */}
             <Modal visible={showSubjectPicker} animationType="slide" transparent onRequestClose={() => {
