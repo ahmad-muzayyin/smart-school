@@ -14,6 +14,12 @@ const client = axios.create({
     },
 });
 
+let store: any = null;
+
+export const injectStore = (_store: any) => {
+    store = _store;
+};
+
 client.interceptors.request.use(async (config) => {
     const token = await SecureStore.getItemAsync('auth_token');
     if (token) {
@@ -35,6 +41,14 @@ client.interceptors.response.use(
             // that falls out of the range of 2xx
             console.log('Response Data:', error.response.data);
             console.log('Response Status:', error.response.status);
+
+            // Handle 401 Unauthorized globally
+            if (error.response.status === 401) {
+                console.log('Session expired or invalid token. Logging out...');
+                if (store) {
+                    store.getState().logout();
+                }
+            }
         } else if (error.request) {
             // The request was made but no response was received
             console.log('No response received (Network Error)');

@@ -9,7 +9,8 @@ const signToken = (id: string) => {
     });
 };
 
-export const login = async (email: string, password: string) => { // Removed tenantId
+export const login = async (email: string, password: string) => {
+    console.log('Login service started for:', email);
     const user = await prisma.user.findUnique({
         where: { email },
         include: {
@@ -33,17 +34,24 @@ export const login = async (email: string, password: string) => { // Removed ten
         }
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+        console.log('User not found in DB');
+        throw new AppError('Incorrect email or password', 401);
+    }
+
+    console.log('User found, checking password...');
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        console.log('Password mismatch');
         throw new AppError('Incorrect email or password', 401);
     }
 
     // Check if tenant is active (skip for OWNER)
-    // Use strict check === false to avoid blocking if isActive is undefined/null (e.g. migration quirks)
-    // Default is active.
     if (user.role !== 'OWNER' && user.tenant && user.tenant.isActive === false) {
         throw new AppError('Sekolah anda sedang tidak aktif/ditangguhkan. Hubungi pemilik sekolah.', 403);
     }
 
+    console.log('Signing token, secret len:', process.env.JWT_SECRET?.length);
     const token = signToken(user.id);
     const { password: _, ...userWithoutPassword } = user;
 

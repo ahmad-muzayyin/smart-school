@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, StatusBar, ViewStyle } from 'react-native';
+import { View, StyleSheet, StatusBar, ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors as defaultColors, getThemeColors } from '../../theme/theme';
 import { useThemeStore } from '../../store/useThemeStore';
 
