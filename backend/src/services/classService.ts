@@ -59,13 +59,10 @@ export const updateClass = async (tenantId: string, classId: string, data: { nam
     const updateData: any = {};
     if (data.name !== undefined) updateData.name = data.name;
 
-    // Improved Logic for HomeRoomTeacher
+    // Direct ID assignment determines the relationship
     if (data.homeRoomTeacherId !== undefined) {
-        if (data.homeRoomTeacherId === null) {
-            updateData.homeRoomTeacher = { disconnect: true };
-        } else {
-            updateData.homeRoomTeacher = { connect: { id: data.homeRoomTeacherId } };
-        }
+        console.log(`Updating class ${classId} homeRoomTeacherId to:`, data.homeRoomTeacherId);
+        updateData.homeRoomTeacherId = data.homeRoomTeacherId;
     }
 
     return await prisma.class.update({
