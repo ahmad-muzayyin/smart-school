@@ -92,6 +92,7 @@ export default function ManageClassesScreen({ navigation }: any) {
             } else {
                 data.homeRoomTeacherId = null;
             }
+
             await client.put(`/classes/${editingClass.id}`, data);
             setModalVisible(false);
             setClassName('');
@@ -100,10 +101,10 @@ export default function ManageClassesScreen({ navigation }: any) {
             fetchClasses();
             Alert.alert('Sukses', 'Kelas berhasil diperbarui');
         } catch (e) {
+            console.error(e);
             Alert.alert('Gagal', 'Terjadi kesalahan');
         }
     };
-
     const deleteClass = async (classId: string, className: string) => {
         Alert.alert(
             'Konfirmasi Hapus',
@@ -275,7 +276,22 @@ export default function ManageClassesScreen({ navigation }: any) {
 
         } catch (error: any) {
             console.error(error);
-            Alert.alert('Gagal', 'Gagal mengekspor data: ' + (error.response?.data?.message || error.message));
+            let errorMessage = error.message || 'Terjadi kesalahan saat mengekspor data.';
+
+            if (error.response && error.response.data) {
+                // Since responseType is arraybuffer, error.response.data is likely a buffer even for JSON errors
+                try {
+                    const text = String.fromCharCode.apply(null, new Uint8Array(error.response.data) as any);
+                    const json = JSON.parse(text);
+                    if (json.message) {
+                        errorMessage = json.message;
+                    }
+                } catch (e) {
+                    // Could not parse JSON from error buffer, ignore
+                }
+            }
+
+            Alert.alert('Gagal', errorMessage);
         } finally {
             setLoading(false);
         }

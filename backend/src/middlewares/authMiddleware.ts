@@ -17,6 +17,7 @@ export const protect = async (
     }
 
     if (!token) {
+        console.log('Auth Failed: No token provided');
         return next(
             new AppError('You are not logged in! Please log in to get access.', 401)
         );
@@ -24,12 +25,14 @@ export const protect = async (
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+        console.log('Token Decoded:', decoded.id, decoded.role);
 
         const currentUser = await prisma.user.findUnique({
             where: { id: decoded.id },
         });
 
         if (!currentUser) {
+            console.log('Auth Failed: User not found in DB');
             return next(
                 new AppError(
                     'The user belonging to this token does no longer exist.',
@@ -46,6 +49,7 @@ export const protect = async (
         };
         next();
     } catch (err) {
+        console.log('Auth Failed: Token verification error', err);
         return next(new AppError('Invalid token. Please log in again!', 401));
     }
 };
