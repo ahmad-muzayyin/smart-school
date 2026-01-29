@@ -9,6 +9,10 @@ export const protect = async (
     next: NextFunction
 ) => {
     let token;
+    console.log(`Auth Check for: ${req.method} ${req.originalUrl}`);
+    // console.log('Headers:', JSON.stringify(req.headers)); // Too verbose
+    console.log('Auth Header:', req.headers.authorization ? 'Present' : 'MISSING');
+
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
