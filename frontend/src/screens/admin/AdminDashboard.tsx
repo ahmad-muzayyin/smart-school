@@ -82,8 +82,8 @@ export default function AdminDashboard({ navigation }: any) {
     };
 
     const MenuItem = ({ icon, label, color, bg, onPress }: any) => (
-        <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
-            <View style={[styles.menuIconContainer, { backgroundColor: isDarkMode ? colors.surface : bg }]}>
+        <TouchableOpacity style={[styles.menuItem, { backgroundColor: isDarkMode ? colors.surface : 'white' }]} onPress={onPress} activeOpacity={0.9}>
+            <View style={[styles.menuIconContainer, { backgroundColor: bg }]}>
                 <Ionicons name={icon} size={28} color={color} />
             </View>
             <Text style={[styles.menuLabel, { color: colors.text }]}>{label}</Text>
@@ -161,7 +161,7 @@ export default function AdminDashboard({ navigation }: any) {
                 </View>
 
                 {/* Custom Admin Menu Grid */}
-                <Text style={styles.sectionTitle}>Menu Utama</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Menu Utama</Text>
                 <View style={styles.gridContainer}>
                     {/* Row 1 */}
                     <MenuItem
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         paddingHorizontal: spacing.xl,
-        marginTop: 20, /* Positive margin to separate from fixed header if needed, or adjust */
+        marginTop: 20, /* Positive margin */
         paddingBottom: 160,
     },
 
@@ -341,8 +341,6 @@ const styles = StyleSheet.create({
     statsCardGradient: {
         borderRadius: 20,
         padding: spacing.lg,
-        position: 'relative',
-        overflow: 'hidden',
     },
     statsPatternCircle: {
         position: 'absolute',
@@ -375,27 +373,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     statIconBadge: {
-        width: 40,
-        height: 40,
-        borderRadius: 12,
+        width: 48,
+        height: 48,
+        borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
     },
     statNumber: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'white',
         lineHeight: 28,
     },
     statLabel: {
         fontSize: 12,
-        color: 'rgba(255,255,255,0.9)',
         fontWeight: '500',
     },
     verticalDivider: {
         width: 1,
         height: 40,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#E2E8F0',
         marginHorizontal: 10,
     },
 
@@ -404,26 +400,33 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        rowGap: spacing.md, // Reduced gap
+        gap: 16,
     },
     menuItem: {
         width: ITEM_WIDTH,
-        alignItems: 'center',
-        gap: 8, // Reduced gap
-    },
-    menuIconContainer: {
-        width: ITEM_WIDTH,
-        height: ITEM_WIDTH,
-        borderRadius: 20, // More modern radius
+        backgroundColor: 'white',
+        borderRadius: 24,
+        padding: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 4,
+        ...shadows.sm,
+        minHeight: 120,
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+    },
+    menuIconContainer: {
+        width: 52,
+        height: 52,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 14,
     },
     menuLabel: {
-        fontSize: 11, // Smaller font
+        fontSize: 13,
+        fontWeight: '700',
         textAlign: 'center',
-        fontWeight: '600',
-        lineHeight: 14,
+        lineHeight: 18,
     },
 
 
@@ -433,8 +436,11 @@ const styles = StyleSheet.create({
         marginBottom: spacing.lg,
     },
     sectionTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
+        marginBottom: spacing.md,
+        color: '#1F2937',
+        marginLeft: 4
     },
     scheduleCard: {
         width: 160,

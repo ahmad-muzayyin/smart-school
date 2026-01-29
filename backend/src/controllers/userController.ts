@@ -53,7 +53,8 @@ export const getTeachers = catchAsync(async (req: Request, res: Response, next: 
     const tenantId = getTenantId(req);
     if (!tenantId) return next(new AppError('Tenant context missing', 400));
 
-    const users = await userService.getUsersByRole(tenantId, Role.TEACHER);
+    // Include Admin and Owner as they might be teachers/homeroom teachers too
+    const users = await userService.getUsersByRole(tenantId, [Role.TEACHER, Role.SCHOOL_ADMIN, Role.OWNER]);
     res.status(200).json({
         status: 'success',
         results: users.length,

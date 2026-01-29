@@ -41,11 +41,12 @@ export const getUserById = async (userId: string) => {
     });
 };
 
-export const getUsersByRole = async (tenantId: string, role: Role) => {
+export const getUsersByRole = async (tenantId: string, role: Role | Role[]) => {
+    const roleCondition = Array.isArray(role) ? { in: role } : role;
     return await prisma.user.findMany({
         where: {
             tenantId,
-            role
+            role: roleCondition
         },
         select: {
             id: true,
