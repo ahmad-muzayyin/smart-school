@@ -116,7 +116,7 @@ export default function TeacherDashboard({ navigation }: any) {
 
             {/* Header Background */}
             <LinearGradient
-                colors={['#EF4444', '#B91C1C']}
+                colors={['#06640aff', '#0a7247ff']}
                 style={styles.headerBackground}
             >
                 <View style={styles.headerContent}>
@@ -133,7 +133,7 @@ export default function TeacherDashboard({ navigation }: any) {
 
 
                     <TouchableOpacity style={styles.profileAvatar} onPress={() => navigation.navigate('Profil')}>
-                        <Text style={{ fontWeight: 'bold', color: '#EF4444', fontSize: 18 }}>
+                        <Text style={{ fontWeight: 'bold', color: '#19790cff', fontSize: 18 }}>
                             {user?.name ? user.name.substring(0, 2).toUpperCase() : 'GU'}
                         </Text>
                     </TouchableOpacity>

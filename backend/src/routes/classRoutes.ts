@@ -32,6 +32,7 @@ router.route('/schedules/:id')
     .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteSchedule);
 
 router.get('/:id/export-rekap', restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.OWNER), classController.exportRecap);
+router.get('/:id/rekap-data', restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.OWNER), classController.getRecapData);
 
 router.route('/:id')
     .get(restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.STUDENT), classController.getClassById)

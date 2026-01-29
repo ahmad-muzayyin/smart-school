@@ -467,3 +467,72 @@ export const exportRecap = catchAsync(async (req: Request, res: Response, next: 
     res.setHeader('Content-Disposition', `attachment; filename=rekap_absensi_${classData.name}_${period.year}_${period.month}.xlsx`);
     res.send(buffer);
 });
+
+export const getRecapData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId = req.user?.tenantId;
+    if (!tenantId) return next(new AppError('Tenant context missing', 400));
+
+    const { id } = req.params; // Class ID
+    const { month } = req.query; // YYYY-MM
+
+    if (!month) return next(new AppError('Month is required (YYYY-MM)', 400));
+
+    const result = await classService.getAttendanceRecap(tenantId, id, String(month));
+    const { classData, students, attendances, period } = result;
+
+    const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { name: true, address: true, logo: true, phone: true }
+    });
+
+    // Build Data Rows (Reuse Logic)
+    // We send raw simple JSON, frontend can render
+    const rows = students.map((student, index) => {
+        const row: any = {
+            no: index + 1,
+            name: student.name,
+            dates: {}
+        };
+
+        const stats = { h: 0, s: 0, i: 0, a: 0 };
+
+        for (let day = 1; day <= period.daysInMonth; day++) {
+            const attendance = attendances.find(a =>
+                a.studentId === student.id &&
+                new Date(a.date).getDate() === day
+            );
+
+            let code = '-';
+            if (attendance) {
+                if (attendance.status === 'PRESENT' || attendance.status === 'LATE') {
+                    code = 'H';
+                    stats.h++;
+                } else if (attendance.status === 'ABSENT') {
+                    code = 'A';
+                    stats.a++;
+                } else if (attendance.status === 'EXCUSED') {
+                    if (attendance.notes && attendance.notes.toLowerCase().includes('sakit')) {
+                        code = 'S';
+                        stats.s++;
+                    } else {
+                        code = 'I';
+                        stats.i++;
+                    }
+                }
+            }
+            row.dates[day] = code;
+        }
+        row.stats = stats;
+        return row;
+    });
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            tenant,
+            class: { name: classData.name },
+            period,
+            rows
+        }
+    });
+});

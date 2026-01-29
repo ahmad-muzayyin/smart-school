@@ -5,8 +5,8 @@ export const palette = {
     brandGreenDark: '#059669',
     brandGreenSoft: '#D1FAE5',
 
-    brandBlue: '#2563EB',
-    brandBlueSoft: '#DBEAFE',
+    brandBlue: '#0c884aff',
+    brandBlueSoft: '#23dd3cff',
 
     slate50: '#F8FAFC',
     slate100: '#F1F5F9',

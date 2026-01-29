@@ -7,7 +7,7 @@ import client from '../../api/client';
 import { Screen } from '../../components/ui/Screen';
 import { colors, layout, spacing, shadows } from '../../theme/theme';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as SecureStore from 'expo-secure-store';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -248,60 +248,45 @@ export default function ManageClassesScreen({ navigation }: any) {
         setLoading(true);
         try {
             const token = await SecureStore.getItemAsync('auth_token');
-            console.log('Token fetched for export:', token ? 'Yes (Length: ' + token.length + ')' : 'NO TOKEN');
-
+            Alert.alert("Debug Token", token ? "Token: " + token.substring(0, 20) + "..." : "TOKEN IS NULL");
             const monthStr = selectedDate.toISOString().slice(0, 7); // YYYY-MM
-            const res = await client.get(`/classes/${classToExport.id}/export-rekap`, {
-                params: {
-                    month: monthStr,
-                    auth_token: token // Sending token via Query Param as fallback
-                },
-                responseType: 'arraybuffer', // Important for binary data
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            const fileName = `Rekap_Absensi_${classToExport.name.replace(/\s+/g, '_')}_${monthStr}.xlsx`;
+            const fileUri = ((FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory) + fileName;
+
+            // Use FileSystem.downloadAsync which is more stable for file downloads than axios arraybuffer
+            // const IP_ADDRESS = '34.126.121.250'; // Match client.ts
+            // const BASE_URL = `http://${IP_ADDRESS}:3000/api`;
+            // Actually, let's use the client.defaults.baseURL if possible, or hardcode for safety as user requested specific IP
+            const downloadUrl = `http://34.126.121.250:3000/api/classes/${classToExport.id}/export-rekap?month=${monthStr}&auth_token=${token}`;
+
+            console.log('Downloading from:', downloadUrl);
+
+            const downloadResumable = (FileSystem as any).createDownloadResumable(
+                downloadUrl,
+                fileUri,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
-            // Convert to base64
-            const uint8Array = new Uint8Array(res.data);
-            let binary = '';
-            for (let i = 0; i < uint8Array.length; i++) {
-                binary += String.fromCharCode(uint8Array[i]);
-            }
-            const base64 = (global as any).btoa ? (global as any).btoa(binary) : binary;
+            const result = await downloadResumable.downloadAsync();
 
-            const dir = (FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory;
-            const fileName = `Rekap_Absensi_${classToExport.name}_${monthStr}.xlsx`;
-            const fileUri = dir + fileName;
-
-            await FileSystem.writeAsStringAsync(fileUri, base64, { encoding: 'base64' });
-
-            setExportModalVisible(false);
-
-            if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri);
+            if (result && result.status === 200) {
+                setExportModalVisible(false);
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(result.uri);
+                } else {
+                    Alert.alert('Sukses', `File tersimpan di: ${result.uri}`);
+                }
             } else {
-                Alert.alert('Sukses', `File tersimpan di: ${fileUri}`);
+                throw new Error('Gagal mendownload file (Status: ' + (result?.status || 'Unknown') + ')');
             }
 
         } catch (error: any) {
             console.error(error);
-            let errorMessage = error.message || 'Terjadi kesalahan saat mengekspor data.';
-
-            if (error.response && error.response.data) {
-                // Since responseType is arraybuffer, error.response.data is likely a buffer even for JSON errors
-                try {
-                    const text = String.fromCharCode.apply(null, new Uint8Array(error.response.data) as any);
-                    const json = JSON.parse(text);
-                    if (json.message) {
-                        errorMessage = json.message;
-                    }
-                } catch (e) {
-                    // Could not parse JSON from error buffer, ignore
-                }
-            }
-
-            Alert.alert('Gagal', errorMessage);
+            Alert.alert('Gagal', 'Terjadi kesalahan saat mengekspor data.');
         } finally {
             setLoading(false);
         }

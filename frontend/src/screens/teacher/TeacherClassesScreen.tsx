@@ -7,6 +7,7 @@ import { Screen } from '../../components/ui/Screen';
 import { colors, layout, shadows, spacing, palette, getThemeColors } from '../../theme/theme';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import * as SecureStore from 'expo-secure-store';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useThemeStore } from '../../store/useThemeStore';
 
@@ -88,43 +89,42 @@ export default function TeacherClassesScreen({ navigation }: any) {
                 a.click();
                 document.body.removeChild(a);
             } else {
-                const fileUri = FileSystem.documentDirectory + `rekap_${className}_${monthStr}.xlsx`;
-                const url = `/classes/${classId}/export-rekap?month=${monthStr}`;
+                // Mobile implementation
+                const token = await SecureStore.getItemAsync('auth_token');
+                if (!token) {
+                    Alert.alert('Error', 'Sesi tidak valid, silakan login ulang.');
+                    return;
+                }
 
-                // We need a way to download with auth header using FileSystem
-                // Client axios can get stream? Expo FileSystem.downloadAsync doesn't easily support custom headers in all versions.
-                // Workaround: Use client to get base64 or blob, then write.
+                const fileName = `Rekap_Absensi_${className.replace(/\s+/g, '_')}_${monthStr}.xlsx`;
+                const fileUri = ((FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory) + fileName;
 
-                const res = await client.get(url, {
-                    responseType: 'text', // Receive as text (binary string) and convert? Or 'arraybuffer'
-                    // Axios in RN with Expo: arraybuffer support varies. 
-                    // Let's use FileSystem.downloadAsync with headers if supported or fetch.
-                });
+                // Robust download url with auth_token query param fallback
+                const IP_ADDRESS = '34.126.121.250';
+                const downloadUrl = `http://${IP_ADDRESS}:3000/api/classes/${classId}/export-rekap?month=${monthStr}&auth_token=${token}`;
 
-                // Actually, client (axios) responseType: 'blob' might not work well in RN.
-                // Valid strategy: get base64 from backend?
-                // Or use FileSystem.downloadAsync:
-                const token = (client.defaults.headers as any).common['Authorization'] || (client.defaults.headers as any)['Authorization'];
+                console.log('Downloading Recap from:', downloadUrl);
 
-                const fullUrl = client.defaults.baseURL + url;
-                const downloadRes = await FileSystem.downloadAsync(
-                    fullUrl,
+                const downloadResumable = (FileSystem as any).createDownloadResumable(
+                    downloadUrl,
                     fileUri,
                     {
                         headers: {
-                            Authorization: token
+                            Authorization: `Bearer ${token}`
                         }
                     }
                 );
 
-                if (downloadRes.status === 200) {
+                const downloadRes = await downloadResumable.downloadAsync();
+
+                if (downloadRes && downloadRes.status === 200) {
                     if (await Sharing.isAvailableAsync()) {
-                        await Sharing.shareAsync(fileUri);
+                        await Sharing.shareAsync(downloadRes.uri);
                     } else {
-                        Alert.alert('Sukses', 'File disimpan di: ' + fileUri);
+                        Alert.alert('Sukses', 'File disimpan di: ' + downloadRes.uri);
                     }
                 } else {
-                    throw new Error('Download failed status ' + downloadRes.status);
+                    throw new Error('Gagal download (Status: ' + (downloadRes?.status || 'Unknown') + ')');
                 }
             }
         } catch (error: any) {
