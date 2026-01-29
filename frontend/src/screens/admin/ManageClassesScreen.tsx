@@ -20,6 +20,7 @@ export default function ManageClassesScreen({ navigation }: any) {
     const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
     const [editingClass, setEditingClass] = useState<any>(null);
     const [showTeacherPicker, setShowTeacherPicker] = useState(false);
+    const [searchTeacher, setSearchTeacher] = useState('');
 
     // Export State
     const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -283,38 +284,64 @@ export default function ManageClassesScreen({ navigation }: any) {
         setExportModalVisible(true);
     };
 
-    const renderItem = ({ item }: any) => (
-        <View style={styles.card}>
-            <View style={styles.iconContainer}>
-                <Ionicons name="school-outline" size={24} color={colors.primary} />
+    const renderItem = ({ item }: any) => {
+        const hasHomeRoom = !!item.homeRoomTeacher;
+        return (
+            <View style={styles.card}>
+                <View style={[styles.statusStrip, { backgroundColor: hasHomeRoom ? colors.success : colors.warning }]} />
+                <View style={[styles.iconContainer, { backgroundColor: hasHomeRoom ? '#D1FAE5' : '#FEF3C7' }]}>
+                    <Ionicons
+                        name={hasHomeRoom ? "school" : "alert-circle-outline"}
+                        size={24}
+                        color={hasHomeRoom ? colors.success : colors.warning}
+                    />
+                </View>
+                <View style={styles.cardContent}>
+                    <Text style={styles.className}>{item.name}</Text>
+
+                    <View style={styles.infoRow}>
+                        <Ionicons name="people-outline" size={14} color={colors.textSecondary} />
+                        <Text style={styles.classDetails}> {item.students?.length || 0} Siswa</Text>
+                    </View>
+
+                    <View style={[styles.infoRow, { marginTop: 2 }]}>
+                        <Ionicons
+                            name={hasHomeRoom ? "person-circle-outline" : "help-circle-outline"}
+                            size={14}
+                            color={hasHomeRoom ? colors.text : colors.error}
+                        />
+                        <Text style={[styles.classDetails, {
+                            color: hasHomeRoom ? colors.text : colors.error,
+                            fontWeight: hasHomeRoom ? 'normal' : '600'
+                        }]}>
+                            {hasHomeRoom ? ` ${item.homeRoomTeacher.name}` : ' Belum ada Wali Kelas'}
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={styles.actionButtons}>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, { backgroundColor: '#F0FDFA' }]}
+                        onPress={() => openExportModal(item)}
+                    >
+                        <Ionicons name="download-outline" size={20} color={colors.success} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, { backgroundColor: '#EFF6FF' }]}
+                        onPress={() => openEditModal(item)}
+                    >
+                        <Ionicons name="create-outline" size={20} color={colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, { backgroundColor: '#FEF2F2' }]}
+                        onPress={() => deleteClass(item.id, item.name)}
+                    >
+                        <Ionicons name="trash-outline" size={20} color={colors.error} />
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.cardContent}>
-                <Text style={styles.className}>{item.name}</Text>
-                <Text style={styles.classDetails}>
-                    {item.students?.length || 0} Siswa
-                    {item.homeRoomTeacher && ` • Walkel: ${item.homeRoomTeacher.name}`}
-                </Text>
-            </View>
-            <TouchableOpacity
-                style={[styles.editBtn, { backgroundColor: colors.success + '20' }]}
-                onPress={() => openExportModal(item)}
-            >
-                <Ionicons name="download-outline" size={20} color={colors.success} />
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.editBtn}
-                onPress={() => openEditModal(item)}
-            >
-                <Ionicons name="create-outline" size={20} color={colors.primary} />
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() => deleteClass(item.id, item.name)}
-            >
-                <Ionicons name="trash-outline" size={20} color={colors.error} />
-            </TouchableOpacity>
-        </View>
-    );
+        );
+    };
 
     return (
         <Screen style={styles.container} safeArea={false}>
@@ -421,22 +448,38 @@ export default function ManageClassesScreen({ navigation }: any) {
             {/* Teacher Picker Modal */}
             <Modal visible={showTeacherPicker} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
+                    <View style={[styles.modalContent, { maxHeight: '60%', paddingBottom: 0 }]}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Pilih Wali Kelas</Text>
                             <TouchableOpacity onPress={() => setShowTeacherPicker(false)}>
                                 <Ionicons name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
                         </View>
+
+                        {/* Search Bar */}
+                        <View style={styles.searchContainer}>
+                            <Ionicons name="search-outline" size={20} color={colors.textSecondary} style={{ marginRight: 8 }} />
+                            <TextInput
+                                placeholder="Cari nama guru..."
+                                style={styles.searchInput}
+                                value={searchTeacher}
+                                onChangeText={setSearchTeacher}
+                                autoFocus={false}
+                            />
+                        </View>
+
                         <FlatList
-                            data={teachers}
+                            data={teachers.filter(t => t.name.toLowerCase().includes(searchTeacher.toLowerCase()))}
                             keyExtractor={item => item.id}
+                            style={{ marginTop: 10 }}
+                            contentContainerStyle={{ paddingBottom: 20 }}
                             renderItem={({ item }) => (
                                 <TouchableOpacity
                                     style={styles.teacherItem}
                                     onPress={() => {
                                         setSelectedTeacher(item);
                                         setShowTeacherPicker(false);
+                                        setSearchTeacher(''); // Reset search
                                     }}
                                 >
                                     <View style={styles.teacherAvatar}>
@@ -453,7 +496,7 @@ export default function ManageClassesScreen({ navigation }: any) {
                             )}
                             ListEmptyComponent={
                                 <View style={styles.emptyTeacher}>
-                                    <Text style={styles.emptyText}>Belum ada data guru</Text>
+                                    <Text style={styles.emptyText}>Guru tidak ditemukan</Text>
                                 </View>
                             }
                         />
@@ -547,43 +590,55 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: colors.surface,
-        borderRadius: layout.borderRadius.md,
+        borderRadius: 16,
         padding: spacing.md,
-        marginBottom: spacing.sm,
+        marginBottom: spacing.md,
         flexDirection: 'row',
         alignItems: 'center',
-        ...shadows.sm
+        ...shadows.sm,
+        overflow: 'hidden', // For status strip
+        position: 'relative'
+    },
+    statusStrip: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: 6,
     },
     iconContainer: {
         width: 48, height: 48,
         borderRadius: 12,
         backgroundColor: colors.primaryLight,
         alignItems: 'center', justifyContent: 'center',
-        marginRight: spacing.md
+        marginRight: spacing.md,
+        marginLeft: 8 // Space after strip
     },
     cardContent: { flex: 1 },
     className: {
         fontSize: 16,
         fontWeight: 'bold',
         color: colors.text,
-        marginBottom: 2
+        marginBottom: 4
+    },
+    infoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     classDetails: {
         fontSize: 12,
-        color: colors.textSecondary
+        color: colors.textSecondary,
+        marginLeft: 2
     },
-    editBtn: {
-        width: 36, height: 36,
-        borderRadius: 10,
-        backgroundColor: colors.primaryLight,
+    actionButtons: {
+        flexDirection: 'column',
+        gap: 8,
+        marginLeft: 8
+    },
+    actionBtn: {
+        width: 32, height: 32,
+        borderRadius: 8,
         alignItems: 'center', justifyContent: 'center',
-        marginRight: spacing.xs
-    },
-    deleteBtn: {
-        width: 36, height: 36,
-        borderRadius: 10,
-        backgroundColor: colors.errorBackground,
-        alignItems: 'center', justifyContent: 'center'
     },
 
     emptyContainer: {
@@ -712,5 +767,22 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 16
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.background,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        height: 48,
+        borderWidth: 1,
+        borderColor: colors.border,
+        marginBottom: 8
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 14,
+        color: colors.text,
+        height: '100%'
     }
 });

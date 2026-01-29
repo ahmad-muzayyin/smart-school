@@ -91,104 +91,77 @@ export default function AdminDashboard({ navigation }: any) {
     );
 
     return (
-        <Screen style={[styles.container, { backgroundColor: colors.background }]} safeArea={false}>
-            <StatusBar style={isDarkMode ? "light" : "dark"} />
+        <Screen style={[styles.container, { backgroundColor: '#F3F4F6' }]} safeArea={false}>
+            <StatusBar style="light" />
 
-            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <View style={styles.logoContainer}>
-                        <View style={styles.logoHex}>
-                            <Ionicons name="cube" size={32} color="#0EA5E9" />
+            {/* Header Background */}
+            <LinearGradient
+                colors={['#0EA5E9', '#0284C7']}
+                style={styles.headerBackground}
+            >
+                <View style={styles.headerContent}>
+                    <View>
+                        <Text style={styles.greetingText}>{t('dashboard.adminDashboard')}</Text>
+                        <Text style={styles.userNameText}>{user?.name?.toUpperCase() || 'ADMIN'}</Text>
+                        <View style={styles.roleBadge}>
+                            <Ionicons name="shield-checkmark" size={12} color="white" />
+                            <Text style={styles.roleBadgeText}>ADMINISTRATOR</Text>
                         </View>
                     </View>
 
-                    <View style={styles.profileSection}>
-                        <View style={styles.profileTextContainer}>
-                            <Text style={[styles.profileName, { color: colors.text }]}>{user?.name || 'Admin'}</Text>
-                            <Text style={[styles.profileRole, { color: colors.textSecondary }]}>{t('dashboard.adminDashboard')}</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                                <Text style={[styles.institution, { color: colors.textSecondary }]}>{user?.tenant?.name || 'Sekolah'}</Text>
-                                <View style={{
-                                    paddingHorizontal: 6,
-                                    paddingVertical: 2,
-                                    borderRadius: 4,
-                                    backgroundColor: (user?.tenant?.isActive === false) ? '#FEE2E2' : '#D1FAE5',
-                                    borderWidth: 1,
-                                    borderColor: (user?.tenant?.isActive === false) ? '#EF4444' : '#10B981',
-                                }}>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: 'bold',
-                                        color: (user?.tenant?.isActive === false) ? '#B91C1C' : '#047857'
-                                    }}>
-                                        {(user?.tenant?.isActive === false) ? 'NONAKTIF' : 'AKTIF'}
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={[styles.avatar, { borderColor: colors.border }]}>
-                            <Image
-                                source={{ uri: 'https://ui-avatars.com/api/?name=Admin+Sekolah&background=random' }}
-                                style={styles.avatarImage}
-                            />
-                        </View>
-                    </View>
+                    <TouchableOpacity style={styles.profileAvatar} onPress={() => navigation.navigate('Settings')}>
+                        <Text style={{ fontWeight: 'bold', color: '#0EA5E9', fontSize: 18 }}>
+                            {user?.name ? user.name.substring(0, 2).toUpperCase() : 'AD'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
-                {/* Stats Card */}
+                {/* Integrated Time Display in Header */}
+                <View style={styles.headerTimeContainer}>
+                    <View style={styles.headerTimeBox}>
+                        <Ionicons name="time-outline" size={20} color="white" style={{ marginRight: 8 }} />
+                        <Text style={styles.headerTimeText}>{getFormattedTime()}</Text>
+                    </View>
+                    <Text style={styles.headerDateText}>{getFormattedDate()}</Text>
+                </View>
+            </LinearGradient>
+
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
                 {/* Modern Stats Card */}
                 <View style={styles.statsCardContainer}>
                     <LinearGradient
-                        colors={[colors.primary, colors.primaryDark]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
+                        colors={['#ffffff', '#f8fafc']}
                         style={styles.statsCardGradient}
                     >
-                        <View style={styles.statsPatternCircle} />
-                        <View style={styles.statsPatternCircle2} />
-
                         <View style={styles.statsRow}>
                             <View style={styles.statBlock}>
-                                <View style={[styles.statIconBadge, { backgroundColor: colors.surface }]}>
-                                    <Ionicons name="people" size={20} color={colors.primary} />
+                                <View style={[styles.statIconBadge, { backgroundColor: '#ECFDF5' }]}>
+                                    <Ionicons name="people" size={24} color="#10B981" />
                                 </View>
                                 <View>
-                                    <Text style={styles.statNumber}>{stats.teacherCount}</Text>
-                                    <Text style={styles.statLabel}>{t('dashboard.teachers')}</Text>
+                                    <Text style={[styles.statNumber, { color: colors.text }]}>{stats.teacherCount}</Text>
+                                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('dashboard.teachers')}</Text>
                                 </View>
                             </View>
 
                             <View style={styles.verticalDivider} />
 
                             <View style={styles.statBlock}>
-                                <View style={[styles.statIconBadge, { backgroundColor: colors.surface }]}>
-                                    <Ionicons name="people-circle" size={20} color={colors.primary} />
+                                <View style={[styles.statIconBadge, { backgroundColor: '#EFF6FF' }]}>
+                                    <Ionicons name="people-circle" size={24} color="#3B82F6" />
                                 </View>
                                 <View>
-                                    <Text style={styles.statNumber}>{stats.studentCount}</Text>
-                                    <Text style={styles.statLabel}>{t('dashboard.students')}</Text>
+                                    <Text style={[styles.statNumber, { color: colors.text }]}>{stats.studentCount}</Text>
+                                    <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('dashboard.students')}</Text>
                                 </View>
                             </View>
                         </View>
                     </LinearGradient>
                 </View>
 
-                {/* Date & Time Card */}
-                <View style={[styles.dateTimeCard, { backgroundColor: colors.surface }]}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View>
-                            <Text style={[styles.dayText, { color: colors.text }]}>{getDayName()}</Text>
-                            <Text style={[styles.dateText, { color: colors.textSecondary }]}>{getFormattedDate()}</Text>
-                        </View>
-                        <View style={[styles.timeContainer, { backgroundColor: defaultColors.primaryLight }]}>
-                            <Ionicons name="time-outline" size={20} color={defaultColors.primary} />
-                            <Text style={[styles.timeText, { color: defaultColors.primary }]}>{getFormattedTime()}</Text>
-                        </View>
-                    </View>
-                </View>
-
-                {/* Grid Menu */}
+                {/* Custom Admin Menu Grid */}
+                <Text style={styles.sectionTitle}>Menu Utama</Text>
                 <View style={styles.gridContainer}>
                     {/* Row 1 */}
                     <MenuItem
@@ -271,61 +244,92 @@ const styles = StyleSheet.create({
         // backgroundColor handled dynamically
     },
     scrollContent: {
-        paddingTop: 60,
-        paddingHorizontal: spacing.lg,
-        paddingBottom: 140, // Increased to prevent bottom nav overlap
+        paddingHorizontal: spacing.xl,
+        marginTop: 20, /* Positive margin to separate from fixed header if needed, or adjust */
+        paddingBottom: 160,
     },
 
-    // Header
-    header: {
+    // New Header Styles
+    headerBackground: {
+        paddingTop: 60,
+        paddingHorizontal: spacing.xl,
+        paddingBottom: 24,
+        borderBottomLeftRadius: 32,
+        borderBottomRightRadius: 32,
+        ...shadows.md,
+    },
+    headerContent: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: spacing.lg,
-    },
-    logoContainer: {
-        justifyContent: 'center',
-        paddingTop: 4,
-    },
-    logoHex: {
-        width: 48,
-        height: 48,
         alignItems: 'center',
-        justifyContent: 'center',
     },
-    profileSection: {
+    greetingText: {
+        color: 'rgba(255,255,255,0.9)',
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    userNameText: {
+        color: 'white',
+        fontSize: 22,
+        fontWeight: 'bold',
+        letterSpacing: 0.5,
+    },
+    roleBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+        marginTop: 4,
+        gap: 6,
     },
-    profileTextContainer: {
-        alignItems: 'flex-end',
+    roleBadgeText: {
+        color: 'white',
+        fontSize: 11,
+        fontWeight: '700',
     },
-    profileName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'right',
+    profileAvatar: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,0.4)',
+        ...shadows.sm,
     },
-    profileRole: {
-        fontSize: 12,
-        textAlign: 'right',
-        marginBottom: 2,
-    },
-    institution: {
-        fontSize: 10,
-        textAlign: 'right',
-        opacity: 0.8,
-    },
-    avatar: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        overflow: 'hidden',
+
+    // New Header Time Styles
+    headerTimeContainer: {
+        marginTop: 20,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderRadius: 16,
+        padding: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)'
     },
-    avatarImage: {
-        width: '100%',
-        height: '100%',
+    headerTimeBox: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    headerTimeText: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold',
+        fontVariant: ['tabular-nums'],
+        letterSpacing: 0.5
+    },
+    headerDateText: {
+        color: 'rgba(255,255,255,0.9)',
+        fontSize: 13,
+        fontWeight: '500'
     },
 
     // Modern Stats Card
@@ -422,33 +426,7 @@ const styles = StyleSheet.create({
         lineHeight: 14,
     },
 
-    // Date & Time Card
-    dateTimeCard: {
-        borderRadius: 16,
-        padding: spacing.md,
-        marginBottom: spacing.lg,
-        ...shadows.sm,
-    },
-    dayText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    dateText: {
-        fontSize: 14,
-        marginTop: 2,
-    },
-    timeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 12,
-    },
-    timeText: {
-        fontSize: 16,
-        fontWeight: '700',
-    },
+
 
     // Today's Schedules
     schedulesSection: {
