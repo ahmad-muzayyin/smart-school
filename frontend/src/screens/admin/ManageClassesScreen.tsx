@@ -9,6 +9,7 @@ import { colors, layout, spacing, shadows } from '../../theme/theme';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import * as SecureStore from 'expo-secure-store';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function ManageClassesScreen({ navigation }: any) {
@@ -246,10 +247,16 @@ export default function ManageClassesScreen({ navigation }: any) {
         if (!classToExport) return;
         setLoading(true);
         try {
+            const token = await SecureStore.getItemAsync('auth_token');
+            console.log('Token fetched for export:', token ? 'Yes (Length: ' + token.length + ')' : 'NO TOKEN');
+
             const monthStr = selectedDate.toISOString().slice(0, 7); // YYYY-MM
             const res = await client.get(`/classes/${classToExport.id}/export-rekap`, {
                 params: { month: monthStr },
-                responseType: 'arraybuffer' // Important for binary data
+                responseType: 'arraybuffer', // Important for binary data
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             // Convert to base64
