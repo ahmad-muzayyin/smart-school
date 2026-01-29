@@ -469,7 +469,10 @@ export default function ManageClassesScreen({ navigation }: any) {
                         </View>
 
                         <FlatList
-                            data={teachers.filter(t => t.name.toLowerCase().includes(searchTeacher.toLowerCase()))}
+                            data={teachers
+                                .filter(t => t.name.toLowerCase().includes(searchTeacher.toLowerCase()))
+                                .sort((a, b) => a.name.localeCompare(b.name))
+                            }
                             keyExtractor={item => item.id}
                             style={{ marginTop: 10 }}
                             contentContainerStyle={{ paddingBottom: 20 }}
