@@ -252,7 +252,10 @@ export default function ManageClassesScreen({ navigation }: any) {
 
             const monthStr = selectedDate.toISOString().slice(0, 7); // YYYY-MM
             const res = await client.get(`/classes/${classToExport.id}/export-rekap`, {
-                params: { month: monthStr },
+                params: {
+                    month: monthStr,
+                    auth_token: token // Sending token via Query Param as fallback
+                },
                 responseType: 'arraybuffer', // Important for binary data
                 headers: {
                     'Authorization': `Bearer ${token}`
