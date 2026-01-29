@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal, TextInput, Alert, AlertButton, Image, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
@@ -43,9 +43,24 @@ export default function ManageUsersScreen({ route, navigation }: any) {
 
     const [showClassPicker, setShowClassPicker] = useState(false);
     const [classSearchQuery, setClassSearchQuery] = useState('');
+    const [tenantInfo, setTenantInfo] = useState<any>(null);
 
     const { isDarkMode } = useThemeStore();
     const colors = getThemeColors(isDarkMode);
+
+    useEffect(() => {
+        if (tenantId) fetchTenantInfo();
+    }, [tenantId]);
+
+    const fetchTenantInfo = async () => {
+        try {
+            const res = await client.get(`/tenants/${tenantId}`);
+            setTenantInfo(res.data.data.tenant);
+        } catch (e) {
+            console.error('Fetch tenant error', e);
+        }
+    };
+
 
     const filteredUsers = users.filter(user => {
         const matchesSearch = (user.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
@@ -255,9 +270,10 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                 return `
                 <div style="page-break-after: always; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; box-sizing: border-box;">
                     <div style="background: white; border-radius: 20px; padding: 30px; width: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;">
+                             ${tenantInfo?.logo ? `<img src="${tenantInfo.logo}" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid white; object-fit: cover; margin-bottom: 10px; background: white;" />` : ''}
                             <h1 style="margin: 0; font-size: 24px; font-weight: bold;">KARTU PELAJAR</h1>
-                            <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">SMA Global Madani</p>
+                            <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">${tenantInfo?.name || 'Sekolah'}</p>
                         </div>
                         <div style="margin: 20px auto; width: 200px; height: 200px; border: 3px solid #667eea; border-radius: 10px; overflow: hidden; display: flex; align-items: justify; justify-content: center;">
                             ${qrSvg}
@@ -776,7 +792,7 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                                     name: selectedStudent.name,
                                     role: 'STUDENT',
                                     email: selectedStudent.email,
-                                    tenantName: 'SMA Global Madani'
+                                    tenantName: tenantInfo?.name || 'Sekolah'
                                 }}
                             />
                         )}

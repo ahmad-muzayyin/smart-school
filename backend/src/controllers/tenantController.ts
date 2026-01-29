@@ -74,9 +74,30 @@ const updateTenantSchema = z.object({
 
 export const updateTenant = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const data = updateTenantSchema.parse(req.body);
 
-    // Only OWNER can update any tenant (already protected by route restriction, but double check logic if needed)
+    let processedBody = { ...req.body };
+
+    // Handle Logo Upload
+    if (req.file) {
+        const protocol = req.secure ? 'https' : 'http';
+        const fileUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        processedBody.logo = fileUrl;
+    }
+
+    // Handle Type Coercion for FormData (since everything is string)
+    if (processedBody.latitude) processedBody.latitude = parseFloat(processedBody.latitude);
+    if (processedBody.longitude) processedBody.longitude = parseFloat(processedBody.longitude);
+    if (processedBody.allowedRadius) processedBody.allowedRadius = parseInt(processedBody.allowedRadius, 10);
+
+    if (processedBody.isActive === 'true') processedBody.isActive = true;
+    if (processedBody.isActive === 'false') processedBody.isActive = false;
+
+    // Handle empty strings as undefined for optional fields to avoid validation errors or overwriting with empty
+    // Actually Zod .optional() handles undefined, but empty string might be invalid for url or email
+    if (processedBody.email === '') processedBody.email = undefined;
+    if (processedBody.website === '') processedBody.website = undefined;
+
+    const data = updateTenantSchema.parse(processedBody);
 
     const tenant = await tenantService.updateTenant(id, data);
 
