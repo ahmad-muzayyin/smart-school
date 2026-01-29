@@ -9,6 +9,7 @@ import { colors, layout, spacing, shadows } from '../../theme/theme';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function ManageClassesScreen({ navigation }: any) {
     const [classes, setClasses] = useState<any[]>([]);
@@ -19,6 +20,12 @@ export default function ManageClassesScreen({ navigation }: any) {
     const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
     const [editingClass, setEditingClass] = useState<any>(null);
     const [showTeacherPicker, setShowTeacherPicker] = useState(false);
+
+    // Export State
+    const [exportModalVisible, setExportModalVisible] = useState(false);
+    const [classToExport, setClassToExport] = useState<any>(null);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -78,6 +85,8 @@ export default function ManageClassesScreen({ navigation }: any) {
             const data: any = { name: className };
             if (selectedTeacher) {
                 data.homeRoomTeacherId = selectedTeacher.id;
+            } else {
+                data.homeRoomTeacherId = null;
             }
             await client.put(`/classes/${editingClass.id}`, data);
             setModalVisible(false);
@@ -228,6 +237,52 @@ export default function ManageClassesScreen({ navigation }: any) {
         );
     };
 
+    const handleExportRecap = async () => {
+        if (!classToExport) return;
+        setLoading(true);
+        try {
+            const monthStr = selectedDate.toISOString().slice(0, 7); // YYYY-MM
+            const res = await client.get(`/classes/${classToExport.id}/export-rekap`, {
+                params: { month: monthStr },
+                responseType: 'arraybuffer' // Important for binary data
+            });
+
+            // Convert to base64
+            const uint8Array = new Uint8Array(res.data);
+            let binary = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+                binary += String.fromCharCode(uint8Array[i]);
+            }
+            const base64 = (global as any).btoa ? (global as any).btoa(binary) : binary;
+
+            const dir = (FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory;
+            const fileName = `Rekap_Absensi_${classToExport.name}_${monthStr}.xlsx`;
+            const fileUri = dir + fileName;
+
+            await FileSystem.writeAsStringAsync(fileUri, base64, { encoding: 'base64' });
+
+            setExportModalVisible(false);
+
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri);
+            } else {
+                Alert.alert('Sukses', `File tersimpan di: ${fileUri}`);
+            }
+
+        } catch (error: any) {
+            console.error(error);
+            Alert.alert('Gagal', 'Gagal mengekspor data: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openExportModal = (item: any) => {
+        setClassToExport(item);
+        setSelectedDate(new Date()); // Default to current month
+        setExportModalVisible(true);
+    };
+
     const renderItem = ({ item }: any) => (
         <View style={styles.card}>
             <View style={styles.iconContainer}>
@@ -235,8 +290,17 @@ export default function ManageClassesScreen({ navigation }: any) {
             </View>
             <View style={styles.cardContent}>
                 <Text style={styles.className}>{item.name}</Text>
-                <Text style={styles.classDetails}>{item.students?.length || 0} Siswa</Text>
+                <Text style={styles.classDetails}>
+                    {item.students?.length || 0} Siswa
+                    {item.homeRoomTeacher && ` • Walkel: ${item.homeRoomTeacher.name}`}
+                </Text>
             </View>
+            <TouchableOpacity
+                style={[styles.editBtn, { backgroundColor: colors.success + '20' }]}
+                onPress={() => openExportModal(item)}
+            >
+                <Ionicons name="download-outline" size={20} color={colors.success} />
+            </TouchableOpacity>
             <TouchableOpacity
                 style={styles.editBtn}
                 onPress={() => openEditModal(item)}
@@ -393,6 +457,51 @@ export default function ManageClassesScreen({ navigation }: any) {
                                 </View>
                             }
                         />
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Export Recap Modal */}
+            <Modal visible={exportModalVisible} animationType="fade" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContent, { height: 'auto', minHeight: undefined }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Export Rekap Absensi</Text>
+                            <TouchableOpacity onPress={() => setExportModalVisible(false)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={{ marginBottom: 10, color: colors.textSecondary }}>
+                            Kelas: <Text style={{ fontWeight: 'bold', color: colors.text }}>{classToExport?.name}</Text>
+                        </Text>
+
+                        <Text style={styles.label}>Pilih Bulan</Text>
+                        <TouchableOpacity
+                            style={[styles.pickerButton, { marginBottom: 20 }]}
+                            onPress={() => setShowDatePicker(true)}
+                        >
+                            <Text style={styles.pickerText}>
+                                {selectedDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+                            </Text>
+                            <Ionicons name="calendar" size={20} color={colors.primary} />
+                        </TouchableOpacity>
+
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDate}
+                                mode="date"
+                                display="default"
+                                onChange={(event, date) => {
+                                    setShowDatePicker(false);
+                                    if (date) setSelectedDate(date);
+                                }}
+                            />
+                        )}
+
+                        <TouchableOpacity style={styles.submitBtn} onPress={handleExportRecap}>
+                            <Text style={styles.submitBtnText}>Download Excel</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>

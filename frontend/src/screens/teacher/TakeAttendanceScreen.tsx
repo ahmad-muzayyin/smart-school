@@ -8,17 +8,36 @@ import { colors, layout, shadows, spacing, palette } from '../../theme/theme';
 
 interface Student {
     id: string;
+    classId?: string;
     name: string;
     status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED' | null;
 }
 
 export default function TakeAttendanceScreen({ route, navigation }: any) {
-    const { scheduleId, className } = route.params;
+    const { scheduleId, className } = route.params || {};
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
 
+    if (!scheduleId && !loading) {
+        // Handle missing param gracefully
+        return (
+            <Screen style={styles.container}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: colors.text }}>Data jadwal tidak ditemukan.</Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 20, padding: 10, backgroundColor: colors.primary, borderRadius: 8 }}>
+                        <Text style={{ color: 'white' }}>Kembali</Text>
+                    </TouchableOpacity>
+                </View>
+            </Screen>
+        );
+    }
+
     useEffect(() => {
-        fetchStudents();
+        if (scheduleId) {
+            fetchStudents();
+        } else {
+            setLoading(false);
+        }
     }, []);
 
     const fetchStudents = async () => {

@@ -25,6 +25,7 @@ router.route('/schedules')
     .post(restrictTo(Role.SCHOOL_ADMIN), classController.createSchedule)
     .get(classController.getTodaySchedule); // Accessible by Teacher, Student, Admin
 
+
 router.route('/schedules/:id')
     .get(classController.getScheduleById) // Accessible by all authenticated users
     .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateSchedule)
@@ -34,5 +35,7 @@ router.route('/:id')
     .get(restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.STUDENT), classController.getClassById)
     .put(restrictTo(Role.SCHOOL_ADMIN), classController.updateClass)
     .delete(restrictTo(Role.SCHOOL_ADMIN), classController.deleteClass);
+
+router.get('/:id/export-rekap', restrictTo(Role.SCHOOL_ADMIN, Role.TEACHER, Role.OWNER), classController.exportRecap);
 
 export default router;

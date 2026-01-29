@@ -354,3 +354,116 @@ export const exportSchedules = catchAsync(async (req: Request, res: Response, ne
     res.setHeader('Content-Disposition', 'attachment; filename=jadwal_pelajaran.xlsx');
     res.send(buffer);
 });
+
+export const exportRecap = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const tenantId = req.user?.tenantId || getTenantId(req);
+    if (!tenantId) return next(new AppError('Tenant context missing', 400));
+
+    const { id } = req.params; // Class ID
+    const { month } = req.query; // YYYY-MM
+
+    if (!month) return next(new AppError('Month is required (YYYY-MM)', 400));
+
+    const result = await classService.getAttendanceRecap(tenantId, id, String(month));
+    const { classData, students, attendances, period } = result;
+
+    // Build Data Matrix
+    const headers = [
+        'No', 'Nama Siswa',
+        ...Array.from({ length: period.daysInMonth }, (_, i) => String(i + 1)),
+        'S', 'I', 'A', 'H'
+    ];
+
+    const dataRows: any[] = [];
+
+    // Helper to map status to code
+    const getStatusCode = (status: string) => {
+        switch (status) {
+            case 'PRESENT': return 'H';
+            case 'ABSENT': return 'A';
+            case 'LATE': return 'T'; // Late counts as present usually or separately? User said "rekap absensi". Usually H, S, I, A. Late is H (Hadir).
+            case 'EXCUSED': return 'I'; // or 'S' depending on notes? Assuming EXCUSED is Ijin/Sakit. 
+            // Better: Check notes or specific status if available.
+            // Standard: PRESENT=H, ABSENT=A, EXCUSED=I. S (Sakit) might be Excused with note 'Sakit'.
+            // For simplicity: EXCUSED -> I. 
+            default: return '-';
+        }
+    };
+
+    // Note: attendance table has 'status' enum: PRESENT, ABSENT, LATE, EXCUSED.
+
+    students.forEach((student, index) => {
+        const row: any = {
+            'No': index + 1,
+            'Nama Siswa': student.name
+        };
+
+        let sCount = 0, iCount = 0, aCount = 0, hCount = 0;
+
+        for (let day = 1; day <= period.daysInMonth; day++) {
+            // Find attendance for this student on this day
+            // This is O(N^2) effectively, optimization: map by date.
+            // Given 1 month and ~30 students, it's fine.
+            const attendance = attendances.find(a =>
+                a.studentId === student.id &&
+                new Date(a.date).getDate() === day
+            );
+
+            let code = '-';
+            if (attendance) {
+                if (attendance.status === 'PRESENT' || attendance.status === 'LATE') {
+                    code = 'H';
+                    hCount++;
+                } else if (attendance.status === 'ABSENT') {
+                    code = 'A';
+                    aCount++;
+                } else if (attendance.status === 'EXCUSED') {
+                    // Check notes for 'Sakit' vs 'Izin'
+                    if (attendance.notes && attendance.notes.toLowerCase().includes('sakit')) {
+                        code = 'S';
+                        sCount++;
+                    } else {
+                        code = 'I';
+                        iCount++;
+                    }
+                }
+            }
+            row[String(day)] = code;
+        }
+
+        row['S'] = sCount;
+        row['I'] = iCount;
+        row['A'] = aCount;
+        row['H'] = hCount;
+
+        dataRows.push(row);
+    });
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(dataRows, { header: headers });
+
+    // Set Column Widths (approximation)
+    const wscols = [
+        { wch: 5 }, // No
+        { wch: 30 }, // Nama
+        ...Array.from({ length: 31 }, () => ({ wch: 3 })), // Days
+        { wch: 4 }, { wch: 4 }, { wch: 4 }, { wch: 4 } // Summary
+    ];
+    worksheet['!cols'] = wscols;
+
+    // Add Title / Metadata rows? json_to_sheet creates table.
+    // Ideally we want a nice header: "Rekap Absensi Kelas X ... Bulan ..."
+    // But XLSX.utils.json_to_sheet is simple.
+    // We can use sheet_add_aoa to add rows at top?
+    // Let's keep it simple: Just the table.
+    // Or add metadata as sheet name.
+
+    const sheetName = `Rekap ${classData.name} ${period.month}-${period.year}`;
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Absensi');
+
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=rekap_absensi_${classData.name}_${period.year}_${period.month}.xlsx`);
+    res.send(buffer);
+});

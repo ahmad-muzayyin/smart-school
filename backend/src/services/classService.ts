@@ -4,7 +4,8 @@ export const createClass = async (tenantId: string, data: { name: string, homeRo
     return await prisma.class.create({
         data: {
             tenantId,
-            name: data.name
+            name: data.name,
+            homeRoomTeacherId: data.homeRoomTeacherId
         }
     });
 };
@@ -14,6 +15,13 @@ export const getAllClasses = async (tenantId: string) => {
         where: { tenantId },
         include: {
             students: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true
+                }
+            },
+            homeRoomTeacher: {
                 select: {
                     id: true,
                     name: true,
@@ -32,6 +40,9 @@ export const getAllClasses = async (tenantId: string) => {
 export const getClassById = async (tenantId: string, classId: string) => {
     return await prisma.class.findFirst({
         where: { id: classId, tenantId },
+        include: {
+            homeRoomTeacher: true
+        }
     });
 };
 
@@ -47,6 +58,7 @@ export const updateClass = async (tenantId: string, classId: string, data: { nam
 
     const updateData: any = {};
     if (data.name !== undefined) updateData.name = data.name;
+    if (data.homeRoomTeacherId !== undefined) updateData.homeRoomTeacherId = data.homeRoomTeacherId;
 
     return await prisma.class.update({
         where: { id: classId },
@@ -170,4 +182,51 @@ export const deleteSchedule = async (tenantId: string, scheduleId: string) => {
     return await prisma.schedule.delete({
         where: { id: scheduleId }
     });
+};
+
+export const getAttendanceRecap = async (tenantId: string, classId: string, monthStr: string) => {
+    // monthStr format 'YYYY-MM'
+    const [year, month] = monthStr.split('-').map(Number);
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0); // Last day of month
+
+    const classData = await prisma.class.findFirst({
+        where: { id: classId, tenantId },
+        include: {
+            homeRoomTeacher: true
+        }
+    });
+
+    if (!classData) throw new Error('Class not found');
+
+    const students = await prisma.user.findMany({
+        where: {
+            classId: classId,
+            role: 'STUDENT',
+            tenantId
+        },
+        orderBy: { name: 'asc' }
+    });
+
+    const attendances = await prisma.attendance.findMany({
+        where: {
+            classId: classId,
+            tenantId,
+            date: {
+                gte: startDate,
+                lte: endDate
+            }
+        }
+    });
+
+    return {
+        classData,
+        students,
+        attendances,
+        period: {
+            month: month,
+            year: year,
+            daysInMonth: endDate.getDate()
+        }
+    };
 };
