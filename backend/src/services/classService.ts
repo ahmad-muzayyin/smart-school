@@ -70,7 +70,16 @@ export const updateClass = async (tenantId: string, classId: string, data: { nam
 
     return await prisma.class.update({
         where: { id: classId },
-        data: updateData
+        data: updateData,
+        include: {
+            homeRoomTeacher: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true
+                }
+            }
+        }
     });
 };
 

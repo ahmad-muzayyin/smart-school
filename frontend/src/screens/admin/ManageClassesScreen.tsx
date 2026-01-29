@@ -38,10 +38,13 @@ export default function ManageClassesScreen({ navigation }: any) {
     const fetchClasses = async () => {
         setLoading(true);
         try {
-            const res = await client.get('/classes');
-            setClasses(res.data.data.classes);
+            const res = await client.get(`/classes?_t=${new Date().getTime()}`);
+            const fetchedClasses = res.data.data.classes;
+            console.log('Fetched Classes:', fetchedClasses.length);
+            console.log('Classes with Homeroom:', fetchedClasses.filter((c: any) => c.homeRoomTeacher).length);
+            setClasses(fetchedClasses);
         } catch (e) {
-            console.error(e);
+            console.error('Fetch Classes Error:', e);
         } finally {
             setLoading(false);
         }
