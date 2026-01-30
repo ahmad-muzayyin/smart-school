@@ -139,13 +139,28 @@ export default function ManageUsersScreen({ route, navigation }: any) {
         try {
             // For OWNER role in system list, we might want to default to creating an ADMIN or OWNER? 
             // The UI should probably lock role.
+            // If role is OWNER, we map it to SCHOOL_ADMIN for creation usually, or check if they selected a role.
+            // Actually, the routeParams 'role' defines the CONTEXT.
+            // If context is OWNER (system users), they can create Owners or Admins.
+            // BUT, the current form only has Name/Email/Password.
+            // Let's assume creating "System Admin" = SCHOOL_ADMIN for a specific tenant? 
+            // OR creating a new Owner? 
+
+            // To keep it simple: If Context is OWNER, and we rely on tenantId param...
+            // If tenantId is null (System View), maybe we can't create users easily without a tenant picker?
+            // Unless we are creating a Super Admin?
+
+            // Allow creating generic users if permitted.
             const payload = { ...form, role: role === 'OWNER' ? 'SCHOOL_ADMIN' : role, tenantId };
+
             await client.post('/users', payload);
             closeModal();
             fetchUsers();
             Alert.alert('Berhasil', `${getRoleLabel()} berhasil ditambahkan`);
-        } catch (e) {
-            Alert.alert('Gagal', 'Terjadi kesalahan saat membuat user');
+        } catch (e: any) {
+            console.error('Create user error:', e);
+            const msg = e.response?.data?.message || 'Terjadi kesalahan saat membuat user';
+            Alert.alert('Gagal', msg);
         }
     };
 
