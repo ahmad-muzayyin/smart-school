@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Platform, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Platform, ScrollView, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from '@react-navigation/native';
@@ -27,6 +27,9 @@ export default function ViewSchedulesScreen({ navigation }: any) {
     const [selectedDay, setSelectedDay] = useState<number | null>(getTodayDayNumber());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [importResult, setImportResult] = useState<any>(null);
+    const [showImportResultModal, setShowImportResultModal] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -123,15 +126,14 @@ export default function ViewSchedulesScreen({ navigation }: any) {
                 timeout: 60000
             });
 
-            Alert.alert(
-                'Import Selesai',
-                `Berhasil: ${res.data.imported}, Gagal: ${res.data.failed}` + (res.data.failed > 0 ? '\nCek console untuk detail error.' : '')
-            );
+            setImportResult(res.data);
+            setShowImportResultModal(true);
 
             fetchSchedules();
         } catch (error: any) {
             console.error('Import Error:', error);
-            Alert.alert('Gagal Import', error.response?.data?.message || 'Gagal mengupload file jadwal');
+            const msg = error.response?.data?.message || error.message || 'Gagal mengupload file jadwal';
+            Alert.alert('Gagal Import', msg);
         } finally {
             setLoading(false);
         }
@@ -367,6 +369,81 @@ export default function ViewSchedulesScreen({ navigation }: any) {
                     />
                 }
             />
+
+            {/* Import Result Modal */}
+            <Modal visible={showImportResultModal} animationType="slide" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Hasil Import Jadwal</Text>
+                            <TouchableOpacity onPress={() => setShowImportResultModal(false)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        {importResult && (
+                            <View style={{ flex: 1 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+                                    <View style={{
+                                        flex: 1, backgroundColor: colors.success + '20', margin: 5, padding: 15, borderRadius: 10, alignItems: 'center'
+                                    }}>
+                                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: colors.success }}>{importResult.imported}</Text>
+                                        <Text style={{ fontSize: 12, color: colors.text }}>Berhasil</Text>
+                                    </View>
+                                    <View style={{
+                                        flex: 1, backgroundColor: colors.error + '20', margin: 5, padding: 15, borderRadius: 10, alignItems: 'center'
+                                    }}>
+                                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: colors.error }}>{importResult.failed}</Text>
+                                        <Text style={{ fontSize: 12, color: colors.text }}>Gagal</Text>
+                                    </View>
+                                </View>
+
+                                {importResult.failed > 0 && (
+                                    <>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, color: colors.text }}>Detail Error:</Text>
+                                        <FlatList
+                                            data={importResult.errors}
+                                            keyExtractor={(_, index) => index.toString()}
+                                            renderItem={({ item }) => (
+                                                <View style={{
+                                                    backgroundColor: colors.surface,
+                                                    padding: 10,
+                                                    borderRadius: 8,
+                                                    marginBottom: 8,
+                                                    borderLeftWidth: 4,
+                                                    borderLeftColor: colors.error
+                                                }}>
+                                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.text }}>
+                                                        Line {item.row?.ClassName || 'Unknown'} - {item.row?.Subject || ''}
+                                                    </Text>
+                                                    <Text style={{ fontSize: 12, color: colors.error, marginTop: 4 }}>
+                                                        {item.error}
+                                                    </Text>
+                                                    <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 4 }}>
+                                                        Data: {JSON.stringify(item.row)}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        />
+                                    </>
+                                )}
+                                {importResult.failed === 0 && (
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Ionicons name="checkmark-circle-outline" size={80} color={colors.success} />
+                                        <Text style={{ marginTop: 20, fontSize: 16, color: colors.text }}>Semua jadwal berhasil diimport!</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                        <TouchableOpacity
+                            style={[styles.closeBtn, { backgroundColor: colors.primary }]}
+                            onPress={() => setShowImportResultModal(false)}
+                        >
+                            <Text style={styles.closeBtnText}>Tutup</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </Screen>
     );
 }
@@ -524,5 +601,42 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
         color: colors.error
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end'
+    },
+    modalContent: {
+        backgroundColor: colors.surface,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: spacing.lg,
+        maxHeight: '85%',
+        minHeight: 400
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.lg
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: colors.text
+    },
+    closeBtn: {
+        borderRadius: 12,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: spacing.md,
+        ...shadows.md
+    },
+    closeBtnText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16
     }
 });
