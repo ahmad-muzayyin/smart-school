@@ -308,10 +308,13 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
 
             imported++;
         } catch (error: any) {
+            console.error(`[Import Schedule Error] Row failed: ${error.message}`, JSON.stringify(row));
             failed++;
             errors.push({ row, message: error.message });
         }
     }
+
+    console.log(`Import Summary - Success: ${imported}, Failed: ${failed}`);
 
     res.status(200).json({
         status: 'success',
