@@ -217,13 +217,13 @@ model TeacherAttendance {
   checkInTime    DateTime?
   checkInLat     Float?
   checkInLong    Float?
-  checkInPhoto   String?
+  checkInPhoto   String? @db.LongText
   checkInAddress String?
 
   checkOutTime    DateTime?
   checkOutLat     Float?
   checkOutLong    Float?
-  checkOutPhoto   String?
+  checkOutPhoto   String? @db.LongText
   checkOutAddress String?
 
   notes     String?
