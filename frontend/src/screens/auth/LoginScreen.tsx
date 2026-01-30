@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
         marginBottom: spacing.xl,
     },
     logoContainer: {
-        width: Dimensions.get('window').width * 0.45,
-        height: Dimensions.get('window').width * 0.45,
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: spacing.lg,
