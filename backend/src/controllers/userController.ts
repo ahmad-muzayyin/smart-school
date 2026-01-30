@@ -100,6 +100,27 @@ export const getStudentsByClass = catchAsync(async (req: Request, res: Response,
     });
 });
 
+export const getSystemUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    // Only OWNER can access this
+    if (req.user!.role !== Role.OWNER) {
+        return next(new AppError('Not authorized', 403));
+    }
+
+    const users = await userService.getGlobalUsersByRole([Role.OWNER, Role.SCHOOL_ADMIN]);
+
+    // Map tenant name for better display
+    const formattedUsers = users.map((u: any) => ({
+        ...u,
+        tenantName: u.tenant?.name || 'System (Global)'
+    }));
+
+    res.status(200).json({
+        status: 'success',
+        results: users.length,
+        data: { users: formattedUsers }
+    });
+});
+
 const updateUserSchema = z.object({
     email: z.string().email().optional(),
     password: z.preprocess(

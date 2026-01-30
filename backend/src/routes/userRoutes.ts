@@ -25,6 +25,7 @@ router.get('/students', userController.getStudents);
 router.get('/export-students', userController.exportStudents);
 router.get('/export-teachers', userController.exportTeachers);
 router.get('/admins', userController.getAdmins);
+router.get('/system', userController.getSystemUsers);
 router.delete('/:id', userController.deleteUser);
 
 export default router;

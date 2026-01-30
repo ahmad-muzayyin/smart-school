@@ -204,3 +204,26 @@ export const getStudentsByClass = async (tenantId: string, classId: string) => {
         }
     });
 };
+
+export const getGlobalUsersByRole = async (roles: Role[]) => {
+    return await prisma.user.findMany({
+        where: {
+            role: { in: roles }
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            tenantId: true,
+            tenant: {
+                select: {
+                    name: true
+                }
+            }
+        },
+        orderBy: {
+            role: 'asc'
+        }
+    });
+};
