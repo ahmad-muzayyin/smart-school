@@ -123,7 +123,7 @@ export default function ViewSchedulesScreen({ navigation }: any) {
             setLoading(true);
             const res = await client.post('/classes/import-schedules', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 60000
+                timeout: 120000 // 120 seconds
             });
 
             setImportResult(res.data);
