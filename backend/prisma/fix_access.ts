@@ -89,10 +89,11 @@ async function main() {
     console.log(`✅ Updated ${updateResult.count} users.`);
     */
 
-    // 3. List some users to help debug
-    console.log('\n📋 Listing first 5 users in database for verification:');
+    // 5. List ALL users to help debug
+    console.log('\n📋 Listing users in database (Email | Role | Name):');
     const users = await prisma.user.findMany({
-        take: 5,
+        take: 100,
+        orderBy: { role: 'asc' },
         select: { email: true, role: true, name: true }
     });
 
