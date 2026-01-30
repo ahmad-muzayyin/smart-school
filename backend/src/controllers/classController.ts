@@ -199,9 +199,15 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
 
             // Helper to convert Excel time (decimal) to HH:mm
             const excelToTime = (val: any) => {
-                if (typeof val === 'number') {
+                let numVal = val;
+                // Handle string that is actually a number (e.g. "0.342")
+                if (typeof val === 'string' && !val.includes(':') && !isNaN(parseFloat(val))) {
+                    numVal = parseFloat(val);
+                }
+
+                if (typeof numVal === 'number') {
                     // Excel time is fraction of day (0.5 = 12:00)
-                    const totalMinutes = Math.round(val * 24 * 60);
+                    const totalMinutes = Math.round(numVal * 24 * 60);
                     const hours = Math.floor(totalMinutes / 60);
                     const minutes = totalMinutes % 60;
                     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
