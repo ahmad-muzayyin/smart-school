@@ -197,12 +197,12 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
                 row = newRow;
             }
 
-            const className = row.ClassName || row.Kelas;
-            const teacherEmail = row.TeacherEmail || row.EmailGuru;
-            const subjectName = row.Subject || row.MataPelajaran;
-            const dayStr = String(row.Day || row.Hari).toLowerCase();
-            const startTime = row.StartTime || row.JamMulai;
-            const endTime = row.EndTime || row.JamSelesai;
+            const className = String(row.ClassName || row.Kelas || '').trim();
+            const teacherEmail = String(row.TeacherEmail || row.EmailGuru || '').trim();
+            const subjectName = String(row.Subject || row.MataPelajaran || '').trim();
+            const dayStr = String(row.Day || row.Hari || '').toLowerCase().trim();
+            const startTime = String(row.StartTime || row.JamMulai || '').trim();
+            const endTime = String(row.EndTime || row.JamSelesai || '').trim();
 
             // Updated validation: TeacherEmail is optional IF Subject is present for auto-link
             if (!className || !subjectName || !dayStr || !startTime || !endTime) {
@@ -210,26 +210,33 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
                 throw new Error('Data tidak lengkap (ClassName, Subject, Day, StartTime, EndTime wajib ada)');
             }
 
-            const targetClass = classes.find(c => c.name.toLowerCase() === String(className).toLowerCase());
-            if (!targetClass) throw new Error(`Kelas "${className}" tidak ditemukan`);
+            console.log(`[Import] Processing: Class=${className}, Subject=${subjectName}, Day=${dayStr}`);
+
+            const targetClass = classes.find(c => c.name.toLowerCase() === className.toLowerCase());
+            if (!targetClass) {
+                console.log(`[Import Error] Class '${className}' not found.`);
+                throw new Error(`Kelas "${className}" tidak ditemukan`);
+            }
 
             // 1. Handle Subject (Auto-create if missing)
-            let subjectObj = subjects.find(s => s.name.toLowerCase() === String(subjectName).toLowerCase());
+            let subjectObj = subjects.find(s => s.name.toLowerCase() === subjectName.toLowerCase());
+            console.log(`[Import] Subject '${subjectName}' found? ${!!subjectObj}`);
+
             if (!subjectObj) {
-                const code = String(subjectName).substring(0, 3).toUpperCase();
+                const code = subjectName.substring(0, 3).toUpperCase();
                 subjectObj = await prisma.subject.create({
                     data: { name: subjectName, code: code, tenantId }
                 });
                 subjects.push(subjectObj);
+                console.log(`[Import] Created new subject: ${subjectName}`);
             }
 
             let targetTeacher: any;
 
             if (teacherEmail) {
-                targetTeacher = teachers.find(t => t.email.toLowerCase() === String(teacherEmail).toLowerCase());
+                targetTeacher = teachers.find(t => t.email.toLowerCase() === teacherEmail.toLowerCase());
                 if (!targetTeacher) throw new Error(`Guru dengan email "${teacherEmail}" tidak ditemukan`);
 
-                // Auto-link Subject to Teacher if teacher has none
                 // Auto-link Subject to Teacher if teacher matches but doesn't have it assigned
                 const hasSubject = targetTeacher.subjects?.some((s: any) => s.id === subjectObj.id);
                 if (!hasSubject) {
@@ -247,7 +254,8 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
                 }
             } else {
                 // Auto-link by subject
-                const matchingTeachers = teachers.filter(t => t.subjects?.some((s: any) => s.name?.toLowerCase() === String(subjectName).toLowerCase()));
+                const matchingTeachers = teachers.filter(t => t.subjects?.some((s: any) => s.name?.toLowerCase() === subjectName.toLowerCase()));
+                console.log(`[Import] Found ${matchingTeachers.length} teachers for subject '${subjectName}'`);
 
                 if (matchingTeachers.length === 0) {
                     throw new Error(`Tidak ditemukan guru pengampu mata pelajaran "${subjectName}". Harap isi EmailGuru secara manual.`);
