@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width * 0.7,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: spacing.lg,
+        marginBottom: spacing.md,
     },
     logoText: {
         color: 'white',

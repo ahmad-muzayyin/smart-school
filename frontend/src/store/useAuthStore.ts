@@ -83,13 +83,17 @@ export const useAuthStore = create<AuthState>()(
 
                     if (err.response) {
                         // Server responded with error code (4xx, 5xx)
-                        message = err.response.data?.message || `Server Error (${err.response.status}). Please try again.`;
+                        const status = err.response.status;
+                        if (status === 401) {
+                            message = 'Email atau password salah.';
+                        } else {
+                            message = err.response.data?.message || `Server Error (${status}). Please try again.`;
+                        }
                     } else if (err.request) {
                         // Request made but no response (Network error, Timeout, etc.)
-                        // This is common when IP is wrong, server is down, or firewall blocks it.
-                        message = `Koneksi Gagal!\n\nTidak dapat menghubungi server di:\n${fullUrl || 'URL tidak diketahui'}\n\nDetail Error: ${err.message}\n\nSolusi:\n1. Pastikan server Backend berjalan.\n2. Pastikan IP Address di client.ts benar.\n3. Pastikan HP dan Server di jaringan yang sama (jika lokal).`;
+                        message = `Koneksi Gagal!\n\nTidak dapat menghubungi server.\nDetail: ${err.message}`;
                     } else {
-                        // Other errors (setup, etc.)
+                        // Other errors
                         message = `Terjadi Kesalahan: ${err.message}`;
                     }
 
