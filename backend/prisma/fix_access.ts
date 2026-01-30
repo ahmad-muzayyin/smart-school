@@ -35,7 +35,51 @@ async function main() {
         console.log('✅ OWNER account created. Login: owner@attendance.com / password123');
     }
 
-    // 2. Reset ALL users password to 'password123' (Optional, safer to just log found users)
+    // 2. Ensure at least one TENANT exists
+    let tenant = await prisma.tenant.findFirst();
+    if (!tenant) {
+        console.log('\n🏫 No Tenant found. Creating "SMA Negeri 1 Jakarta"...');
+        tenant = await prisma.tenant.create({
+            data: {
+                name: 'SMA Negeri 1 Jakarta',
+                address: 'Jl. Pendidikan No. 1',
+                latitude: -6.2088,
+                longitude: 106.8456
+            }
+        });
+        console.log('✅ Created Tenant: SMA Negeri 1 Jakarta');
+    } else {
+        console.log(`\n🏫 Found existing Tenant: ${tenant.name}`);
+    }
+
+    // 3. Ensure TEACHER exists (teacher1.1@school.com)
+    const teacherEmail = 'teacher1.1@school.com';
+    const teacher = await prisma.user.findUnique({ where: { email: teacherEmail } });
+    if (teacher) {
+        console.log(`\n👩‍🏫 Found TEACHER (${teacherEmail}). Resetting password...`);
+        await prisma.user.update({
+            where: { email: teacherEmail },
+            data: { password: hashedPassword }
+        });
+        console.log('✅ TEACHER password reset to: password123');
+    } else {
+        console.log(`\n👩‍🏫 Creating TEACHER (${teacherEmail})...`);
+        const subject = await prisma.subject.findFirst({ where: { tenantId: tenant.id } });
+        // Create subject if needed, but for now just null is okay or create simple
+
+        await prisma.user.create({
+            data: {
+                email: teacherEmail,
+                password: hashedPassword,
+                name: 'Guru Fisika',
+                role: 'TEACHER',
+                tenantId: tenant.id
+            }
+        });
+        console.log('✅ TEACHER account created. Login: teacher1.1@school.com / password123');
+    }
+
+    // 4. Reset ALL users password to 'password123' (Optional, safer to just log found users)
     // Uncomment the below block if you really want to reset EVERYONE.
     /*
     console.log('\n🔄 Resetting ALL users passwords to "password123"...');
