@@ -41,6 +41,16 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
 
     const data = createUserSchema.parse(req.body);
 
+    // Validate classId if provided
+    if (data.classId) {
+        const classExists = await prisma.class.findFirst({
+            where: { id: data.classId, tenantId }
+        });
+        if (!classExists) {
+            return next(new AppError('Kelas tidak ditemukan', 400));
+        }
+    }
+
     const newUser = await userService.createUser(tenantId, data);
 
     res.status(201).json({
