@@ -48,6 +48,9 @@ export default function ManageUsersScreen({ route, navigation }: any) {
     const { isDarkMode } = useThemeStore();
     const colors = getThemeColors(isDarkMode);
 
+    const [importResult, setImportResult] = useState<any>(null);
+    const [showImportResultModal, setShowImportResultModal] = useState(false);
+
     useEffect(() => {
         if (tenantId) fetchTenantInfo();
     }, [tenantId]);
@@ -421,15 +424,8 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                 // Hapus transformRequest jika ada karena bisa merusak format FormData di RN
             });
 
-            Alert.alert(
-                'Import Selesai',
-                `Berhasil: ${res.data.imported}, Gagal: ${res.data.failed}` + (res.data.failed > 0 ? '\nCek console untuk detail error.' : '')
-            );
-
-            if (res.data.errors && res.data.errors.length > 0) {
-                console.log('Import errors:', res.data.errors);
-            }
-
+            setImportResult(res.data);
+            setShowImportResultModal(true);
             fetchUsers();
         } catch (error: any) {
             console.error('Import Error:', error);
@@ -1050,6 +1046,81 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                                 </View>
                             }
                         />
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Import Result Modal */}
+            <Modal visible={showImportResultModal} animationType="slide" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContent, { backgroundColor: colors.background, maxHeight: '90%' }]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: colors.text }]}>Hasil Import</Text>
+                            <TouchableOpacity onPress={() => setShowImportResultModal(false)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        {importResult && (
+                            <View style={{ flex: 1 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+                                    <View style={{
+                                        flex: 1, backgroundColor: defaultColors.success + '20', margin: 5, padding: 15, borderRadius: 10, alignItems: 'center'
+                                    }}>
+                                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: defaultColors.success }}>{importResult.imported}</Text>
+                                        <Text style={{ fontSize: 12, color: colors.text }}>Berhasil</Text>
+                                    </View>
+                                    <View style={{
+                                        flex: 1, backgroundColor: defaultColors.error + '20', margin: 5, padding: 15, borderRadius: 10, alignItems: 'center'
+                                    }}>
+                                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: defaultColors.error }}>{importResult.failed}</Text>
+                                        <Text style={{ fontSize: 12, color: colors.text }}>Gagal</Text>
+                                    </View>
+                                </View>
+
+                                {importResult.failed > 0 && (
+                                    <>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, color: colors.text }}>Detail Error:</Text>
+                                        <FlatList
+                                            data={importResult.errors}
+                                            keyExtractor={(_, index) => index.toString()}
+                                            renderItem={({ item }) => (
+                                                <View style={{
+                                                    backgroundColor: colors.surface,
+                                                    padding: 10,
+                                                    borderRadius: 8,
+                                                    marginBottom: 8,
+                                                    borderLeftWidth: 4,
+                                                    borderLeftColor: defaultColors.error
+                                                }}>
+                                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: colors.text }}>
+                                                        {item.row?.Name || item.row?.Email || 'Data Baris Tidak Diketahui'}
+                                                    </Text>
+                                                    <Text style={{ fontSize: 12, color: defaultColors.error, marginTop: 4 }}>
+                                                        {item.error}
+                                                    </Text>
+                                                    <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 4 }}>
+                                                        Line Data: {JSON.stringify(item.row)}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        />
+                                    </>
+                                )}
+                                {importResult.failed === 0 && (
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                        <Ionicons name="checkmark-circle-outline" size={80} color={defaultColors.success} />
+                                        <Text style={{ marginTop: 20, fontSize: 16, color: colors.text }}>Semua data berhasil diimport!</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                        <TouchableOpacity
+                            style={[styles.submitBtn, { backgroundColor: defaultColors.primary, marginTop: 20 }]}
+                            onPress={() => setShowImportResultModal(false)}
+                        >
+                            <Text style={styles.submitBtnText}>Tutup</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
