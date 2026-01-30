@@ -35,8 +35,23 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
     }
 
     const tenantId = getTenantId(req);
-    if (!tenantId) {
+    // If Owner is creating a SYSTEM ADMIN (global), tenantId might be null? 
+    // But currently Schema requires tenantId for User.
+    // If Owner creates School Admin, they MUST pass tenantId.
+    // If Owner creates another Owner, tenantId might be optional? 
+    // Let's check Schema: tenantId String (required).
+    // So even Owner needs a dummy tenant or we must enforce tenantId.
+
+    // For now, if Owner creates School Admin, tenantId is required.
+    // If user is Owner, they select a school to manage, so tenantId should be in body.
+    if (!tenantId && req.user!.role !== Role.OWNER) {
         return next(new AppError('Tenant context missing', 400));
+    }
+
+    // If Owner and no tenantId, check if creating OWNER/SUPERADMIN (if allowed)
+    // But generally Owner manages a specific school.
+    if (!tenantId && req.body.role === Role.SCHOOL_ADMIN) {
+        return next(new AppError('Mohon pilih sekolah terlebih dahulu', 400));
     }
 
     const data = createUserSchema.parse(req.body);
