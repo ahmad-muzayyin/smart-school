@@ -276,7 +276,7 @@ export const importUsers = catchAsync(async (req: Request, res: Response, next: 
             const userPayload = {
                 name: row['Name'] || row['name'] || row['Nama'],
                 email: row['Email'] || row['email'],
-                password: row['Password'] || row['password'] || '123456',
+                password: String(row['Password'] || row['password'] || '123456'),
                 role: role,
                 classId: classId
             };
