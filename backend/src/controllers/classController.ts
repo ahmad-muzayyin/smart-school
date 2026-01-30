@@ -197,12 +197,25 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
                 row = newRow;
             }
 
+            // Helper to convert Excel time (decimal) to HH:mm
+            const excelToTime = (val: any) => {
+                if (typeof val === 'number') {
+                    // Excel time is fraction of day (0.5 = 12:00)
+                    const totalMinutes = Math.round(val * 24 * 60);
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+                    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                }
+                return String(val || '').trim();
+            };
+
             const className = String(row.ClassName || row.Kelas || '').trim();
             const teacherEmail = String(row.TeacherEmail || row.EmailGuru || '').trim();
             const subjectName = String(row.Subject || row.MataPelajaran || '').trim();
             const dayStr = String(row.Day || row.Hari || '').toLowerCase().trim();
-            const startTime = String(row.StartTime || row.JamMulai || '').trim();
-            const endTime = String(row.EndTime || row.JamSelesai || '').trim();
+
+            const startTime = excelToTime(row.StartTime || row.JamMulai);
+            const endTime = excelToTime(row.EndTime || row.JamSelesai);
 
             // Updated validation: TeacherEmail is optional IF Subject is present for auto-link
             if (!className || !subjectName || !dayStr || !startTime || !endTime) {
