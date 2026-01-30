@@ -49,8 +49,6 @@ export default function LoginScreen() {
                                 style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
                             />
                         </View>
-                        <Text style={[styles.title, { color: colors.text }]}>Welcome back</Text>
-                        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign in to your account</Text>
                     </View>
 
                     <View style={[styles.card, { backgroundColor: colors.surface }]}>
