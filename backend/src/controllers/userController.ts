@@ -11,8 +11,11 @@ const createUserSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
     name: z.string().min(1),
-    role: z.enum([Role.TEACHER, Role.STUDENT, Role.SCHOOL_ADMIN]),
-    classId: z.string().optional(),
+    role: z.enum([Role.TEACHER, Role.STUDENT, Role.SCHOOL_ADMIN, Role.OWNER]),
+    classId: z.preprocess(
+        (val) => (val === '' || val === 'null' || val === null) ? undefined : val,
+        z.string().optional()
+    ),
     subjectIds: z.array(z.string()).optional()
 });
 
@@ -35,38 +38,32 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
     }
 
     const tenantId = getTenantId(req);
-    // If Owner is creating a SYSTEM ADMIN (global), tenantId might be null? 
-    // But currently Schema requires tenantId for User.
-    // If Owner creates School Admin, they MUST pass tenantId.
-    // If Owner creates another Owner, tenantId might be optional? 
-    // Let's check Schema: tenantId String (required).
-    // So even Owner needs a dummy tenant or we must enforce tenantId.
+    const targetRole = req.body.role;
 
-    // For now, if Owner creates School Admin, tenantId is required.
-    // If user is Owner, they select a school to manage, so tenantId should be in body.
     if (!tenantId && req.user!.role !== Role.OWNER) {
         return next(new AppError('Tenant context missing', 400));
     }
 
-    // If Owner and no tenantId, check if creating OWNER/SUPERADMIN (if allowed)
-    // But generally Owner manages a specific school.
-    if (!tenantId && req.body.role === Role.SCHOOL_ADMIN) {
-        return next(new AppError('Mohon pilih sekolah terlebih dahulu', 400));
+    if (!tenantId && (targetRole === Role.SCHOOL_ADMIN || targetRole === Role.TEACHER || targetRole === Role.STUDENT)) {
+        return next(new AppError(`Mohon pilih sekolah terlebih dahulu untuk menambahkan ${targetRole}`, 400));
     }
 
     const data = createUserSchema.parse(req.body);
 
     // Validate classId if provided
     if (data.classId) {
+        if (!tenantId) {
+            return next(new AppError('Kelas harus terikat dengan sekolah (Tenant ID missing)', 400));
+        }
         const classExists = await prisma.class.findFirst({
-            where: { id: data.classId, tenantId }
+            where: { id: data.classId, tenantId: tenantId }
         });
         if (!classExists) {
             return next(new AppError('Kelas tidak ditemukan', 400));
         }
     }
 
-    const newUser = await userService.createUser(tenantId, data);
+    const newUser = await userService.createUser(tenantId || undefined, data);
 
     res.status(201).json({
         status: 'success',

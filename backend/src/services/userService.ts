@@ -2,7 +2,7 @@ import prisma from '../config/db';
 import { Role } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
-export const createUser = async (tenantId: string, data: { email: string, password: string, name: string, role: Role, classId?: string, subjectIds?: string[] }) => {
+export const createUser = async (tenantId: string | undefined, data: { email: string, password: string, name: string, role: Role, classId?: string, subjectIds?: string[] }) => {
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
     return await prisma.user.create({
@@ -11,7 +11,7 @@ export const createUser = async (tenantId: string, data: { email: string, passwo
             password: hashedPassword,
             name: data.name,
             role: data.role,
-            tenantId: tenantId,
+            tenantId: tenantId || null, // Handle undefined/null explicitly for Prisma
             classId: data.classId,
             subjects: data.subjectIds ? {
                 connect: data.subjectIds.map(id => ({ id }))
