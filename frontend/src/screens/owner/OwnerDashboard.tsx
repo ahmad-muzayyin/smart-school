@@ -145,12 +145,20 @@ export default function OwnerDashboard({ navigation }: any) {
                         <Text style={[styles.greeting, { color: colors.textSecondary }]}>Welcome Back</Text>
                         <Text style={[styles.title, { color: colors.text }]}>School Management</Text>
                     </View>
-                    <TouchableOpacity
-                        style={[styles.addButton, { backgroundColor: colors.primary }]}
-                        onPress={() => navigation.navigate('CreateTenant')}
-                    >
-                        <Ionicons name="add" size={24} color="white" />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <TouchableOpacity
+                            style={[styles.addButton, { backgroundColor: colors.surface }]}
+                            onPress={() => navigation.navigate('ManageUsers', { role: 'OWNER', tenantId: null })} // Trigger access to system users
+                        >
+                            <Ionicons name="people" size={24} color={colors.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.addButton, { backgroundColor: colors.primary }]}
+                            onPress={() => navigation.navigate('CreateTenant')}
+                        >
+                            <Ionicons name="add" size={24} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Summary Cards */}

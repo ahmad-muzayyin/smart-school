@@ -92,7 +92,10 @@ export default function ManageUsersScreen({ route, navigation }: any) {
         if (role === 'TEACHER') endpoint = '/users/teachers';
         if (role === 'SCHOOL_ADMIN') endpoint = '/users/admins';
 
-        if (tenantId) {
+        // New: System users for Owner
+        if (role === 'OWNER') endpoint = '/users/system';
+
+        if (tenantId && role !== 'OWNER') {
             endpoint += `?tenantId=${tenantId}`;
         }
         try {
@@ -107,10 +110,6 @@ export default function ManageUsersScreen({ route, navigation }: any) {
 
     const fetchClasses = async () => {
         try {
-            // If Owner, classes might need tenantId too? Yes, probably. 
-            // Assuming tenantId applies here too if ClassController supports it.
-            // Let's assume for now classes list is global or filtered by user. Owner needs tenantId.
-            // But ManageClasses is separate. Let's just try basic users first.
             const res = await client.get('/classes');
             setClasses(res.data.data.classes);
         } catch (e) {
@@ -138,7 +137,9 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             return;
         }
         try {
-            const payload = { ...form, role, tenantId }; // Pass tenantId for Owner
+            // For OWNER role in system list, we might want to default to creating an ADMIN or OWNER? 
+            // The UI should probably lock role.
+            const payload = { ...form, role: role === 'OWNER' ? 'SCHOOL_ADMIN' : role, tenantId };
             await client.post('/users', payload);
             closeModal();
             fetchUsers();
@@ -236,6 +237,7 @@ export default function ManageUsersScreen({ route, navigation }: any) {
         if (role === 'TEACHER') return 'Guru';
         if (role === 'STUDENT') return 'Siswa';
         if (role === 'SCHOOL_ADMIN') return 'Admin Sekolah';
+        if (role === 'OWNER') return 'Users System';
         return 'User';
     };
 
