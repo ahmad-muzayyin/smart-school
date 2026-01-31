@@ -95,9 +95,12 @@ export const updateTenant = catchAsync(async (req: Request, res: Response, next:
     if (processedBody.isActive === 'false') processedBody.isActive = false;
 
     // Handle empty strings as undefined for optional fields to avoid validation errors or overwriting with empty
-    // Actually Zod .optional() handles undefined, but empty string might be invalid for url or email
-    if (processedBody.email === '') processedBody.email = undefined;
-    if (processedBody.website === '') processedBody.website = undefined;
+    // Handle empty strings as undefined for optional fields to avoid validation errors
+    if (processedBody.email === '' || processedBody.email === 'null') processedBody.email = undefined;
+    if (processedBody.website === '' || processedBody.website === 'null') processedBody.website = undefined;
+
+    // Remove email from body if it's invalid, to prevent validation error blocking the update
+    // Or we expect the user to fix it. But let's be lenient for now.
 
     const data = updateTenantSchema.parse(processedBody);
 
