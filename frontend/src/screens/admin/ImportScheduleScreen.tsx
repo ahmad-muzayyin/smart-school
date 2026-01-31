@@ -54,29 +54,39 @@ export default function ImportScheduleScreen({ navigation }: any) {
         }
     };
 
-    // DOWNLOAD TEMPLATE IMPLEMENTATION (Real attempt)
+    // DOWNLOAD TEMPLATE IMPLEMENTATION
     const downloadTemplate = async () => {
         try {
             setLoading(true);
-            const apiUrl = client.defaults.baseURL + '/import/template?type=schedules';
 
-            // Get Token (assuming you have a way to get it, e.g. from storage)
-            // For now, let's try opening in browser (if auth is cookie based? No it's Bearer).
-            // Opening in browser won't work easily with Bearer token header.
+            // Access token from storage or assume axios client handles it
+            // Using axios client which already has interceptors for Auth
+            const response = await client.get('/import/template?type=schedules', {
+                responseType: 'blob' // IMPORTANT: Receive binary data
+            });
 
-            // Best way: Use FileSystem.downloadAsync
-            // We need to import useAuthStore to get token
-            // I will assume useAuthStore is available.
+            // WEB DOWNLOAD LOGIC
+            const blob = new Blob([response.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Template_Smart_Jadwal.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
 
-            // Placeholder:
-            Alert.alert('Info', 'Template akan didownload...');
-            // Logic to actually download would go here using FileSystem
-        } catch (e) {
-            console.error(e);
+            Alert.alert('Sukses', 'Template berhasil didownload. Cek folder download Anda.');
+
+        } catch (e: any) {
+            console.error('Download error:', e);
+            Alert.alert('Gagal', 'Gagal mendownload template: ' + (e.message || 'Server error'));
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleUpload = async () => {
         try {
