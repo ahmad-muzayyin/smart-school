@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import client from '../../api/client';
 import { Screen } from '../../components/ui/Screen';
@@ -44,7 +44,7 @@ export default function TeacherScheduleScreen({ navigation }: any) {
             }
             setSchedules(res.data.data.schedules);
         } catch (error) {
-            console.error(error);
+            Alert.alert('Error', 'Gagal memuat jadwal. Periksa koneksi internet Anda.');
         } finally {
             setLoading(false);
         }
