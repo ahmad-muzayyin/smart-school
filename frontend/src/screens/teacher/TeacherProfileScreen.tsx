@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Switch } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 import { Screen } from '../../components/ui/Screen';
 import { useAuthStore } from '../../store/useAuthStore';
 import { colors as defaultColors, spacing, typography, layout, shadows, getThemeColors } from '../../theme/theme';
@@ -22,8 +24,48 @@ export default function TeacherProfileScreen({ navigation }: any) {
         );
     };
 
-    const MenuItem = ({ icon, label, onPress, danger, value }: any) => (
-        <TouchableOpacity style={[styles.menuItem, { backgroundColor: colors.surface }]} onPress={onPress} activeOpacity={0.7}>
+    const [biometricEnabled, setBiometricEnabled] = React.useState(false);
+
+    React.useEffect(() => {
+        checkBiometricStatus();
+    }, []);
+
+    const checkBiometricStatus = async () => {
+        const creds = await SecureStore.getItemAsync('biometric_credentials');
+        setBiometricEnabled(!!creds);
+    };
+
+    const toggleBiometric = async (value: boolean) => {
+        if (!value) {
+            // Turning OFF
+            Alert.alert(
+                'Nonaktifkan Biometrik',
+                'Apakah Anda yakin ingin menghapus data login biometrik?',
+                [
+                    { text: 'Batal', style: 'cancel' },
+                    {
+                        text: 'Nonaktifkan',
+                        style: 'destructive',
+                        onPress: async () => {
+                            await SecureStore.deleteItemAsync('biometric_credentials');
+                            setBiometricEnabled(false);
+                        }
+                    }
+                ]
+            );
+        } else {
+            // Turning ON
+            Alert.alert(
+                'Aktifkan Biometrik',
+                'Fitur ini akan aktif otomatis setelah Anda login kembali secara manual. Silakan logout dan login ulang.',
+                [{ text: 'OK' }]
+            );
+            // We don't set to true because we don't have creds yet
+        }
+    };
+
+    const MenuItem = ({ icon, label, onPress, danger, value, rightElement }: any) => (
+        <TouchableOpacity style={[styles.menuItem, { backgroundColor: colors.surface }]} onPress={onPress} activeOpacity={onPress ? 0.7 : 1}>
             <View style={[styles.menuIconContainer, { backgroundColor: colors.background }, danger && styles.menuIconDanger]}>
                 <Ionicons name={icon} size={20} color={danger ? defaultColors.error : colors.text} />
             </View>
@@ -31,7 +73,7 @@ export default function TeacherProfileScreen({ navigation }: any) {
                 <Text style={[styles.menuLabel, { color: colors.text }, danger && styles.menuLabelDanger]}>{label}</Text>
                 {value && <Text style={[styles.menuValue, { color: colors.textSecondary }]}>{value}</Text>}
             </View>
-            <Ionicons name="chevron-forward" size={16} color={defaultColors.gray300} />
+            {rightElement || <Ionicons name="chevron-forward" size={16} color={defaultColors.gray300} />}
         </TouchableOpacity>
     );
 
@@ -67,6 +109,19 @@ export default function TeacherProfileScreen({ navigation }: any) {
                 <View style={styles.sectionContainer}>
                     <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Pengaturan</Text>
                     <View style={[styles.card, { backgroundColor: colors.surface }]}>
+                        <MenuItem
+                            icon="finger-print-outline"
+                            label="Login Biometrik"
+                            rightElement={
+                                <Switch
+                                    value={biometricEnabled}
+                                    onValueChange={toggleBiometric}
+                                    trackColor={{ false: '#767577', true: defaultColors.primaryLight }}
+                                    thumbColor={biometricEnabled ? defaultColors.primary : '#f4f3f4'}
+                                />
+                            }
+                        />
+                        <View style={[styles.divider, { backgroundColor: colors.border }]} />
                         <MenuItem
                             icon="lock-closed-outline"
                             label="Ganti Password"
