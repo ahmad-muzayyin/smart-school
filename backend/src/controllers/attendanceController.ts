@@ -186,54 +186,73 @@ export const exportAttendance = catchAsync(async (req: Request, res: Response, n
     ];
 
     // 3. Add Logo & Header (Kop Surat)
-    let startRow = 1;
+    let hasLogo = false;
 
     // Try to fetch logo if exists
     if (tenant?.logo) {
         try {
             const axios = require('axios');
-            const response = await axios.get(tenant.logo, { responseType: 'arraybuffer' });
-            const imageId = workbook.addImage({
-                buffer: response.data,
-                extension: 'png', // Assuming png, exceljs handles types reasonably well
+            // Add timeout and validate status
+            const response = await axios.get(tenant.logo, {
+                responseType: 'arraybuffer',
+                timeout: 5000
             });
 
-            // Insert logo spanning A1:B4
-            worksheet.addImage(imageId, {
-                tl: { col: 0, row: 0 },
-                ext: { width: 100, height: 100 },
-                editAs: 'absolute'
-            });
+            if (response.status === 200 && response.data.length > 0) {
+                const imageId = workbook.addImage({
+                    buffer: response.data,
+                    extension: 'png',
+                });
 
-            // Adjust row height for logo space
-            worksheet.getRow(1).height = 80;
-        } catch (e) {
-            console.error('Failed to load logo for excel:', e);
-            // Ignore error, continue without logo
+                // Insert logo at A1 with decent size (approx 100x100px)
+                worksheet.addImage(imageId, {
+                    tl: { col: 0.2, row: 0.2 }, // Slightly padded
+                    ext: { width: 80, height: 80 },
+                    editAs: 'absolute'
+                });
+                hasLogo = true;
+            }
+        } catch (e: any) { // Explicitly type 'e' as 'any' or 'Error'
+            console.error('Failed to load logo for excel (URL: ' + tenant.logo + '):', e.message);
+            // Fallback: If fetch fails, we simply don't show the broken image icon.
+            // In ExcelJS, if we don't addImage, nothing shows up (clean).
         }
     }
 
-    // Header Text (School Name, Address)
-    // Merge C1:G1 for School Name
-    worksheet.mergeCells('C1:G1');
-    const nameCell = worksheet.getCell('C1');
-    nameCell.value = tenant?.name || 'SEKOLAH';
-    nameCell.font = { name: 'Arial', family: 4, size: 16, bold: true };
-    nameCell.alignment = { vertical: 'middle', horizontal: 'left' };
+    // Set Row Height for Kop Surat
+    worksheet.getRow(1).height = 20;
+    worksheet.getRow(2).height = 20;
+    worksheet.getRow(3).height = 20;
+    worksheet.getRow(4).height = 10; // Spacing
+
+    // Header Text - Center Aligned properly
+    // School Name
+    worksheet.mergeCells('B1:G1'); // Shifted to B to leave A for Logo space visual
+    const nameCell = worksheet.getCell('B1');
+    nameCell.value = (tenant?.name || 'SEKOLAH').toUpperCase();
+    nameCell.font = { name: 'Arial', size: 16, bold: true };
+    nameCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
     // Address
     if (tenant?.address) {
-        worksheet.mergeCells('C2:G2');
-        const addrCell = worksheet.getCell('C2');
+        worksheet.mergeCells('B2:G2');
+        const addrCell = worksheet.getCell('B2');
         addrCell.value = tenant.address;
         addrCell.font = { name: 'Arial', size: 10 };
-        addrCell.alignment = { vertical: 'middle', horizontal: 'left' };
+        addrCell.alignment = { vertical: 'middle', horizontal: 'center' };
     }
 
-    // Report Date Info
-    worksheet.mergeCells('C3:G3');
-    worksheet.getCell('C3').value = `Laporan Presensi: ${req.query.date ? new Date(req.query.date as string).toLocaleDateString('id-ID') : 'Semua Tanggal'}`;
-    worksheet.getCell('C3').font = { italic: true, size: 10 };
+    // Report Title
+    worksheet.mergeCells('B3:G3');
+    worksheet.getCell('B3').value = `LAPORAN PRESENSI HARIAN`;
+    worksheet.getCell('B3').font = { name: 'Arial', size: 12, bold: true, underline: true };
+    worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // Date
+    const dateStr = req.query.date ? new Date(req.query.date as string).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'Semua Periode';
+    worksheet.mergeCells('B4:G4');
+    worksheet.getCell('B4').value = `Tanggal: ${dateStr}`;
+    worksheet.getCell('B4').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
     // 4. Data Table Header
