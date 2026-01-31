@@ -57,7 +57,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Izinkan aplikasi mengakses lokasi untuk memverifikasi kehadiran Anda."
         }
-      ]
+      ],
+      "./plugins/withAndroidAgpFix"
     ],
     "extra": {
       "eas": {
