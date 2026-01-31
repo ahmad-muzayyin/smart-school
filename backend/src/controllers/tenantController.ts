@@ -79,8 +79,10 @@ export const updateTenant = catchAsync(async (req: Request, res: Response, next:
 
     // Handle Logo Upload
     if (req.file) {
+        console.log('File Uploaded:', req.file); // DEBUG LOG
         const protocol = req.secure ? 'https' : 'http';
         const fileUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+        console.log('Generated URL:', fileUrl); // DEBUG LOG
         processedBody.logo = fileUrl;
     }
 
