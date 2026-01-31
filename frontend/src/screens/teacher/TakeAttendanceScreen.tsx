@@ -132,35 +132,33 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
         <TouchableOpacity
             style={[
                 styles.statusBtn,
-                active && { backgroundColor: color, borderColor: color },
-                !active && { borderColor: colors.border }
+                active ? { backgroundColor: color, borderColor: color } : { borderColor: colors.border, backgroundColor: 'transparent' }
             ]}
             onPress={onPress}
+            activeOpacity={0.7}
         >
             {active ? (
-                <Ionicons name={icon} size={16} color="white" />
+                <Ionicons name={icon} size={18} color="white" />
             ) : (
-                <Text style={styles.statusBtnText}>{label}</Text>
+                <Text style={[styles.statusBtnText, { color }]}>{label}</Text>
             )}
         </TouchableOpacity>
     );
 
     const renderItem = ({ item }: { item: Student }) => (
-        <View style={styles.card}>
+        <View style={[styles.card,
+        item.status === 'PRESENT' && { borderLeftColor: colors.success, borderLeftWidth: 4 },
+        item.status === 'EXCUSED' && { borderLeftColor: colors.info, borderLeftWidth: 4 },
+        item.status === 'LATE' && { borderLeftColor: colors.warning, borderLeftWidth: 4 },
+        item.status === 'ABSENT' && { borderLeftColor: colors.error, borderLeftWidth: 4 },
+        ]}>
             <View style={styles.studentInfo}>
-                <View style={[styles.avatar, item.status === 'PRESENT' && { borderColor: colors.success }]}>
+                <View style={styles.avatar}>
                     <Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
-                    {item.status && (
-                        <View style={[styles.statusDot,
-                        item.status === 'PRESENT' && { backgroundColor: colors.success },
-                        item.status === 'LATE' && { backgroundColor: colors.warning },
-                        item.status === 'ABSENT' && { backgroundColor: colors.error },
-                        ]} />
-                    )}
                 </View>
-                <View>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.idText}>NIS: {item.id.substring(0, 6)}</Text>
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
+                    <Text style={styles.idText}>NIS: {item.id.substring(0, 8).toUpperCase()}</Text>
                 </View>
             </View>
 
@@ -171,6 +169,13 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
                     active={item.status === 'PRESENT'}
                     color={colors.success}
                     onPress={() => submitStatus(item.id, 'PRESENT')}
+                />
+                <StatusButton
+                    label="I"
+                    icon="document-text"
+                    active={item.status === 'EXCUSED'}
+                    color={colors.info}
+                    onPress={() => submitStatus(item.id, 'EXCUSED')}
                 />
                 <StatusButton
                     label="T"
@@ -229,6 +234,13 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
                             {(students || []).filter(s => s.status === 'PRESENT').length}
                         </Text>
                         <Text style={styles.summaryLabel}>Hadir</Text>
+                    </View>
+                    <View style={styles.divider} />
+                    <View style={styles.summaryItem}>
+                        <Text style={styles.summaryValue}>
+                            {(students || []).filter(s => s.status === 'EXCUSED').length}
+                        </Text>
+                        <Text style={styles.summaryLabel}>Izin</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={styles.summaryItem}>
@@ -433,13 +445,13 @@ const styles = StyleSheet.create({
     name: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 2 },
     idText: { fontSize: 10, color: colors.textSecondary },
 
-    actions: { flexDirection: 'row', gap: 8 },
+    actions: { flexDirection: 'row', gap: 6 },
     statusBtn: {
-        width: 36, height: 36, borderRadius: 12,
-        borderWidth: 1,
+        width: 38, height: 38, borderRadius: 10,
+        borderWidth: 1.5,
         alignItems: 'center', justifyContent: 'center'
     },
-    statusBtnText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
+    statusBtnText: { fontSize: 16, fontWeight: '700' },
 
     // Modal Styles
     modalOverlay: {

@@ -42,6 +42,8 @@ export const palette = {
     yellow500: '#EAB308',
     yellow600: '#CA8A04',
 
+    blue500: '#3B82F6',
+
     white: '#FFFFFF',
     black: '#000000',
 
@@ -67,6 +69,7 @@ const lightColors = {
     errorBackground: palette.red50,
     warning: palette.yellow500,
     warningBackground: palette.yellow50,
+    info: palette.blue500,
     gray300: palette.gray300,
 };
 
@@ -86,6 +89,7 @@ const darkColors = {
     errorBackground: '#450A0A',
     warning: palette.yellow500,
     warningBackground: '#422006',
+    info: palette.blue500,
     gray300: palette.gray600,
 };
 
