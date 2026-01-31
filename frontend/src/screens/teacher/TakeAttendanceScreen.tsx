@@ -132,65 +132,48 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
         <TouchableOpacity
             style={[
                 styles.statusBtn,
-                active ? { backgroundColor: color, borderColor: color } : { borderColor: colors.border, backgroundColor: 'transparent' }
+                active
+                    ? { backgroundColor: color, borderColor: color, elevation: 2 }
+                    : { backgroundColor: colors.surface, borderColor: colors.border }
             ]}
             onPress={onPress}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
         >
             {active ? (
-                <Ionicons name={icon} size={18} color="white" />
+                <Ionicons name={icon} size={20} color="white" />
             ) : (
-                <Text style={[styles.statusBtnText, { color }]}>{label}</Text>
+                <Text style={[styles.statusBtnText, { color: colors.textSecondary }]}>{label}</Text>
             )}
         </TouchableOpacity>
     );
 
     const renderItem = ({ item }: { item: Student }) => (
         <View style={[styles.card,
-        item.status === 'PRESENT' && { borderLeftColor: colors.success, borderLeftWidth: 4 },
-        item.status === 'EXCUSED' && { borderLeftColor: colors.info, borderLeftWidth: 4 },
-        item.status === 'LATE' && { borderLeftColor: colors.warning, borderLeftWidth: 4 },
-        item.status === 'ABSENT' && { borderLeftColor: colors.error, borderLeftWidth: 4 },
+        {
+            borderLeftColor: item.status === 'PRESENT' ? colors.success :
+                item.status === 'EXCUSED' ? colors.info :
+                    item.status === 'LATE' ? colors.warning :
+                        item.status === 'ABSENT' ? colors.error : 'transparent',
+            borderLeftWidth: item.status ? 4 : 0
+        }
         ]}>
-            <View style={styles.studentInfo}>
-                <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
+            <View style={styles.cardContent}>
+                <View style={styles.studentHeader}>
+                    <View style={styles.avatar}>
+                        <Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
+                    </View>
+                    <View style={styles.nameContainer}>
+                        <Text style={styles.name}>{item.name}</Text>
+                        <Text style={styles.idText}>NIS: {item.id.substring(0, 8).toUpperCase()}</Text>
+                    </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                    <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
-                    <Text style={styles.idText}>NIS: {item.id.substring(0, 8).toUpperCase()}</Text>
-                </View>
-            </View>
 
-            <View style={styles.actions}>
-                <StatusButton
-                    label="H"
-                    icon="checkmark"
-                    active={item.status === 'PRESENT'}
-                    color={colors.success}
-                    onPress={() => submitStatus(item.id, 'PRESENT')}
-                />
-                <StatusButton
-                    label="I"
-                    icon="document-text"
-                    active={item.status === 'EXCUSED'}
-                    color={colors.info}
-                    onPress={() => submitStatus(item.id, 'EXCUSED')}
-                />
-                <StatusButton
-                    label="T"
-                    icon="time"
-                    active={item.status === 'LATE'}
-                    color={colors.warning}
-                    onPress={() => submitStatus(item.id, 'LATE')}
-                />
-                <StatusButton
-                    label="A"
-                    icon="close"
-                    active={item.status === 'ABSENT'}
-                    color={colors.error}
-                    onPress={() => submitStatus(item.id, 'ABSENT')}
-                />
+                <View style={styles.actionRow}>
+                    <StatusButton label="H" icon="checkmark" active={item.status === 'PRESENT'} color={colors.success} onPress={() => submitStatus(item.id, 'PRESENT')} />
+                    <StatusButton label="I" icon="document-text" active={item.status === 'EXCUSED'} color={colors.info} onPress={() => submitStatus(item.id, 'EXCUSED')} />
+                    <StatusButton label="T" icon="time" active={item.status === 'LATE'} color={colors.warning} onPress={() => submitStatus(item.id, 'LATE')} />
+                    <StatusButton label="A" icon="close" active={item.status === 'ABSENT'} color={colors.error} onPress={() => submitStatus(item.id, 'ABSENT')} />
+                </View>
             </View>
         </View>
     );
@@ -420,38 +403,45 @@ const styles = StyleSheet.create({
 
     card: {
         backgroundColor: colors.surface,
-        padding: spacing.md,
-        borderRadius: layout.borderRadius.md,
-        marginBottom: spacing.sm,
+        borderRadius: 16,
+        marginBottom: 12,
+        ...shadows.sm,
+        overflow: 'hidden'
+    },
+    cardContent: {
+        padding: 16,
+    },
+    studentHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        ...shadows.sm
+        marginBottom: 16
     },
-    studentInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+    nameContainer: {
+        flex: 1,
+        marginLeft: 12,
+        justifyContent: 'center'
+    },
     avatar: {
-        width: 44, height: 44, borderRadius: 22,
+        width: 48, height: 48, borderRadius: 24,
         backgroundColor: colors.background,
         alignItems: 'center', justifyContent: 'center',
-        marginRight: spacing.md,
-        borderWidth: 2, borderColor: colors.border
+        borderWidth: 1, borderColor: colors.border
     },
-    avatarText: { fontWeight: 'bold', color: colors.textSecondary, fontSize: 16 },
-    statusDot: {
-        position: 'absolute', bottom: 0, right: 0,
-        width: 12, height: 12, borderRadius: 6,
-        borderWidth: 2, borderColor: 'white'
-    },
-    name: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: 2 },
-    idText: { fontSize: 10, color: colors.textSecondary },
+    avatarText: { fontWeight: 'bold', color: colors.textSecondary, fontSize: 18 },
+    name: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 2 },
+    idText: { fontSize: 12, color: colors.textSecondary },
 
-    actions: { flexDirection: 'row', gap: 6 },
+    actionRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 8
+    },
     statusBtn: {
-        width: 38, height: 38, borderRadius: 10,
-        borderWidth: 1.5,
+        width: 44, height: 44, borderRadius: 22,
+        borderWidth: 1,
         alignItems: 'center', justifyContent: 'center'
     },
-    statusBtnText: { fontSize: 16, fontWeight: '700' },
+    statusBtnText: { fontSize: 16, fontWeight: '600' },
 
     // Modal Styles
     modalOverlay: {
