@@ -20,6 +20,7 @@ import ViewSchedulesScreen from '../screens/admin/ViewSchedulesScreen';
 import AttendanceReportScreen from '../screens/admin/AttendanceReportScreen';
 import ManageSubjectsScreen from '../screens/admin/ManageSubjectsScreen';
 import SchoolSettingsScreen from '../screens/admin/SchoolSettingsScreen';
+import ImportScheduleScreen from '../screens/admin/ImportScheduleScreen';
 
 // Teacher
 import TeacherTabNavigator from './TeacherTabNavigator';
@@ -98,6 +99,7 @@ export default function RootNavigator() {
                                 <Stack.Screen name="AttendanceReport" component={AttendanceReportScreen} />
                                 <Stack.Screen name="ManageSubjects" component={ManageSubjectsScreen} />
                                 <Stack.Screen name="SchoolSettings" component={SchoolSettingsScreen} />
+                                <Stack.Screen name="ImportSchedule" component={ImportScheduleScreen} />
                                 {/* Common Screens */}
                                 <Stack.Screen name="Settings" component={SettingsScreen} />
                                 <Stack.Screen name="Help" component={HelpScreen} />

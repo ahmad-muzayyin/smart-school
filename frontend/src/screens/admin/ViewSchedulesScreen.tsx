@@ -178,8 +178,10 @@ export default function ViewSchedulesScreen({ navigation }: any) {
             'Kelola Jadwal',
             'Pilih aksi yang ingin dilakukan',
             [
-                { text: 'Download Template', onPress: handleDownloadTemplate },
-                { text: 'Import Jadwal (Upload)', onPress: handleImportExcel },
+                {
+                    text: 'Import Cerdas (New)',
+                    onPress: () => navigation.navigate('ImportSchedule')
+                },
                 { text: 'Export Jadwal (Download)', onPress: handleExportExcel },
                 { text: 'Batal', style: 'cancel' }
             ]
