@@ -29,7 +29,7 @@ export default function TeacherScheduleScreen({ navigation }: any) {
                 res = await client.get('/classes/schedules');
             } else {
                 const today = getTodayDayNumber();
-                res = await client.get(`/classes/schedules/today?allTeachers=true&dayOfWeek=${today}`);
+                res = await client.get(`/classes/schedules?allTeachers=true&dayOfWeek=${today}`);
             }
             setSchedules(res.data.data.schedules);
         } catch (error) {
