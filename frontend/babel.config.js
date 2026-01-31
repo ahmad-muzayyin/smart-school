@@ -8,9 +8,6 @@ module.exports = function (api) {
                     unstable_transformImportMeta: true,
                 },
             ],
-        ],
-        plugins: [
-            'react-native-reanimated/plugin',
-        ],
+        ]
     };
 };
