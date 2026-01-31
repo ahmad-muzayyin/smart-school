@@ -5,7 +5,7 @@ import { colors, spacing, typography, shadows } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 import client from '../../api/client';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
 import { useAuthStore } from '../../store/useAuthStore';
