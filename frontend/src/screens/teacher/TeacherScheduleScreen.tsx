@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import client from '../../api/client';
 import { Screen } from '../../components/ui/Screen';
@@ -12,9 +12,20 @@ export default function TeacherScheduleScreen({ navigation }: any) {
     const [schedules, setSchedules] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Filter states for "Semua Jadwal"
+    const [selectedDay, setSelectedDay] = useState(0);
+    const [searchClass, setSearchClass] = useState('');
+
+    const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+    useEffect(() => {
+        // Init selected day to today
+        setSelectedDay(getTodayDayNumber());
+    }, []);
+
     useEffect(() => {
         fetchSchedule();
-    }, [viewMode]);
+    }, [viewMode, selectedDay]);
 
     const getTodayDayNumber = () => {
         const day = new Date().getDay();
@@ -28,8 +39,8 @@ export default function TeacherScheduleScreen({ navigation }: any) {
             if (viewMode === 'my') {
                 res = await client.get('/classes/schedules');
             } else {
-                const today = getTodayDayNumber();
-                res = await client.get(`/classes/schedules?allTeachers=true&dayOfWeek=${today}`);
+                // Use selectedDay filter
+                res = await client.get(`/classes/schedules?allTeachers=true&dayOfWeek=${selectedDay}`);
             }
             setSchedules(res.data.data.schedules);
         } catch (error) {
@@ -39,15 +50,16 @@ export default function TeacherScheduleScreen({ navigation }: any) {
         }
     };
 
-    const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
 
     const renderItem = ({ item }: any) => {
         const isToday = item.dayOfWeek === getTodayDayNumber();
-        const isMySchedule = viewMode === 'my' || (item.teacherId && item.teacherId === client.defaults.headers.common['x-user-id']); // Approximate check if we had user ID
+        const isMySchedule = viewMode === 'my' || (item.teacherId && item.teacherId === client.defaults.headers.common['x-user-id']);
 
         return (
             <View style={styles.cardContainer}>
-                <View style={[styles.timeStripe, !isToday && viewMode === 'my' && { backgroundColor: colors.textSecondary }]} />
+                {/* Time Stripe: Green if Today, else Blue/Gray */}
+                <View style={[styles.timeStripe, { backgroundColor: isToday ? colors.success : palette.brandBlue }, !isToday && viewMode === 'my' && { backgroundColor: colors.textSecondary }]} />
                 <View style={styles.cardContent}>
                     <View style={styles.cardHeader}>
                         <View>
@@ -147,9 +159,38 @@ export default function TeacherScheduleScreen({ navigation }: any) {
                         style={[styles.tabBtn, viewMode === 'all' && styles.tabBtnActive]}
                         onPress={() => setViewMode('all')}
                     >
-                        <Text style={[styles.tabText, viewMode === 'all' && styles.tabTextActive]}>Semua Hari Ini</Text>
+                        <Text style={[styles.tabText, viewMode === 'all' && styles.tabTextActive]}>Semua Jadwal</Text>
                     </TouchableOpacity>
                 </View>
+
+                {viewMode === 'all' && (
+                    <View style={styles.filterContainer}>
+                        {/* Day Selector */}
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dayScroll}>
+                            {days.map((day, index) => (
+                                <TouchableOpacity
+                                    key={day}
+                                    style={[styles.dayChip, selectedDay === index && styles.dayChipActive]}
+                                    onPress={() => setSelectedDay(index)}
+                                >
+                                    <Text style={[styles.dayChipText, selectedDay === index && styles.dayChipTextActive]}>{day}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+
+                        {/* Search Class */}
+                        <View style={styles.searchBox}>
+                            <Ionicons name="search-outline" size={20} color="white" style={{ marginRight: 8, opacity: 0.8 }} />
+                            <TextInput
+                                placeholder="Cari Kelas (Cth: 7A)"
+                                placeholderTextColor="rgba(255,255,255,0.6)"
+                                style={styles.searchInput}
+                                value={searchClass}
+                                onChangeText={setSearchClass}
+                            />
+                        </View>
+                    </View>
+                )}
             </LinearGradient>
 
             {viewMode === 'my' ? (
@@ -167,11 +208,13 @@ export default function TeacherScheduleScreen({ navigation }: any) {
                 />
             ) : (
                 <FlatList
-                    data={schedules}
+                    data={schedules.filter(s =>
+                        !searchClass || (s.class && s.class.name.toLowerCase().includes(searchClass.toLowerCase()))
+                    )}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={!loading ? <EmptyState text="Tidak ada jadwal hari ini" /> : null}
+                    ListEmptyComponent={!loading ? <EmptyState text="Tidak ada jadwal ditemukan" /> : null}
                 />
             )}
         </Screen>
@@ -249,5 +292,15 @@ const styles = StyleSheet.create({
     actionButtonTextDisabled: { color: colors.textSecondary },
 
     emptyContainer: { alignItems: 'center', marginTop: 60, opacity: 0.5 },
-    emptyText: { marginTop: spacing.sm, color: colors.text }
+    emptyText: { marginTop: spacing.sm, color: colors.text },
+
+    filterContainer: { marginTop: 20 },
+    dayScroll: { paddingVertical: 5, paddingHorizontal: 4, gap: 8 },
+    dayChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', marginRight: 8 },
+    dayChipActive: { backgroundColor: 'white' },
+    dayChipText: { color: 'white', fontSize: 13, fontWeight: '600' },
+    dayChipTextActive: { color: palette.brandBlue, fontWeight: 'bold' },
+
+    searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, marginTop: 15 },
+    searchInput: { flex: 1, color: 'white', fontSize: 14, fontWeight: '500' }
 });
