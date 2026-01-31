@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as classService from '../services/classService';
+import * as userService from '../services/userService';
 import { catchAsync } from '../utils/catchAsync';
 import { z } from 'zod';
 import { AppError } from '../utils/AppError';
@@ -254,7 +255,41 @@ export const importSchedules = catchAsync(async (req: Request, res: Response, ne
 
             if (teacherEmail) {
                 targetTeacher = teachers.find(t => t.email.toLowerCase() === teacherEmail.toLowerCase());
-                if (!targetTeacher) throw new Error(`Guru dengan email "${teacherEmail}" tidak ditemukan`);
+
+                if (!targetTeacher) {
+                    // Check if user exists but with different role
+                    const existingUser = await prisma.user.findUnique({
+                        where: { email: teacherEmail },
+                        include: { subjects: true } // Include subjects to be consistent
+                    });
+
+                    if (existingUser) {
+                        if (existingUser.role !== Role.TEACHER) {
+                            throw new Error(`Email "${teacherEmail}" sudah terdaftar sebagai ${existingUser.role}, bukan TEACHER.`);
+                        }
+                        // User exists and is TEACHER (maybe was skipped in cache for some reason?)
+                        // Or we just missed it? Add to cache for next time
+                        targetTeacher = existingUser;
+                        teachers.push(targetTeacher);
+                    } else {
+                        // User does not exist at all -> Auto Create
+                        console.log(`[Import] Teacher '${teacherEmail}' not found. Auto-creating...`);
+                        const name = teacherEmail.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+                        targetTeacher = await userService.createUser(tenantId, {
+                            email: teacherEmail,
+                            password: '123456',
+                            name: name,
+                            role: Role.TEACHER,
+                            subjectIds: [subjectObj.id]
+                        });
+
+                        // Populate subjects for local checks
+                        targetTeacher.subjects = [subjectObj];
+                        teachers.push(targetTeacher);
+                        console.log(`[Import] Created new teacher: ${name}`);
+                    }
+                }
 
                 // Auto-link Subject to Teacher if teacher matches but doesn't have it assigned
                 const hasSubject = targetTeacher.subjects?.some((s: any) => s.id === subjectObj.id);
