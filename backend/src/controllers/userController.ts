@@ -8,10 +8,10 @@ import { AppError } from '../utils/AppError';
 import * as XLSX from 'xlsx';
 
 const createUserSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-    name: z.string().min(1),
-    role: z.enum([Role.TEACHER, Role.STUDENT, Role.SCHOOL_ADMIN, Role.OWNER]),
+    email: z.string({ required_error: "Email wajib diisi" }).email("Format email tidak valid"),
+    password: z.string({ required_error: "Password wajib diisi" }).min(6, "Password minimal 6 karakter"),
+    name: z.string({ required_error: "Nama wajib diisi" }).min(1, "Nama tidak boleh kosong"),
+    role: z.enum([Role.TEACHER, Role.STUDENT, Role.SCHOOL_ADMIN, Role.OWNER], { required_error: "Role wajib dipilih" }),
     classId: z.preprocess(
         (val) => (val === '' || val === 'null' || val === null) ? undefined : val,
         z.string().optional()
@@ -144,12 +144,15 @@ export const getSystemUsers = catchAsync(async (req: Request, res: Response, nex
 });
 
 const updateUserSchema = z.object({
-    email: z.string().email().optional(),
+    email: z.preprocess(
+        (val) => (val === '' || val === null) ? undefined : val,
+        z.string().email("Format email tidak valid").optional()
+    ),
     password: z.preprocess(
         (val) => (val === '' || val === null || val === undefined) ? undefined : val,
-        z.string().min(6).optional()
+        z.string().min(6, "Password minimal 6 karakter").optional()
     ),
-    name: z.string().min(1).optional(),
+    name: z.string().min(1, "Nama tidak boleh kosong").optional(),
     classId: z.preprocess(
         (val) => (val === '' || val === 'null' || val === null) ? null : val,
         z.string().optional().nullable()
