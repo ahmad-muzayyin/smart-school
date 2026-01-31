@@ -42,8 +42,8 @@ export default function ViewSchedulesScreen({ navigation }: any) {
         try {
             const res = await client.get('/classes');
             setClasses(res.data.data.classes);
-        } catch (err) {
-            console.error('Error fetching classes:', err);
+        } catch (err: any) {
+            // Silently fail or show unobtrusive alert
         }
     };
 
@@ -58,7 +58,7 @@ export default function ViewSchedulesScreen({ navigation }: any) {
             const res = await client.get(url);
             setSchedules(res.data.data.schedules);
         } catch (err: any) {
-            setError('Gagal memuat jadwal pelajaran');
+            setError('Gagal memuat jadwal pelajaran. Cek koneksi internet.');
         } finally {
             setLoading(false);
         }
@@ -131,7 +131,6 @@ export default function ViewSchedulesScreen({ navigation }: any) {
 
             fetchSchedules();
         } catch (error: any) {
-            console.error('Import Error:', error);
             const msg = error.response?.data?.message || error.message || 'Gagal mengupload file jadwal';
             Alert.alert('Gagal Import', msg);
         } finally {
@@ -168,8 +167,7 @@ export default function ViewSchedulesScreen({ navigation }: any) {
                 Alert.alert('Berhasil', `File disimpan di: ${fileUri}`);
             }
         } catch (error: any) {
-            console.error('Export Error:', error);
-            Alert.alert('Gagal Export', 'Terjadi kesalahan saat mengekspor jadwal.');
+            Alert.alert('Gagal Export', error.response?.data?.message || error.message || 'Terjadi kesalahan saat mengekspor jadwal.');
         } finally {
             setLoading(false);
         }

@@ -377,7 +377,6 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             }
 
         } catch (error: any) {
-            console.error('Error generating PDF:', error);
             Alert.alert('Gagal', `Terjadi kesalahan saat membuat PDF: ${error.message || error}`);
         }
     };
@@ -400,7 +399,6 @@ export default function ManageUsersScreen({ route, navigation }: any) {
 
             const dir = (FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory;
             if (!dir) {
-                console.log('FileSystem keys:', Object.keys(FileSystem));
                 throw new Error('Directory penyimpanan tidak ditemukan (Local storage null)');
             }
 
@@ -413,7 +411,6 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                 Alert.alert('Info', 'Fitur berbagi tidak tersedia di perangkat ini');
             }
         } catch (error: any) {
-            console.error('Download Template Error:', error);
             Alert.alert('Gagal', `Tidak dapat membuat file template: ${error.message}`);
         }
     };
@@ -453,8 +450,8 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             setImportResult(res.data);
             setShowImportResultModal(true);
             fetchUsers();
+            fetchUsers();
         } catch (error: any) {
-            console.error('Import Error:', error);
             const msg = error.response?.data?.message || error.message || 'Terjadi kesalahan saat mengupload file.';
             Alert.alert('Gagal Import', msg);
         } finally {
@@ -465,7 +462,7 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                     await FileSystem.deleteAsync(result.assets[0].uri, { idempotent: true });
                 }
             } catch (e) {
-                console.log('Cleanup error (non-fatal):', e);
+                // Ignore cleanup errors
             }
         }
     };

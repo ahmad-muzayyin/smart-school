@@ -120,17 +120,12 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
                 status
             };
 
-            console.log('Submitting attendance:', payload);
+            await client.post('/attendance', payload);
 
-            const response = await client.post('/attendance', payload);
-
-            console.log('Attendance saved successfully:', response.data);
-
-            // Optional: Show success feedback
-            // Alert.alert('Berhasil', 'Presensi tersimpan');
+            // Silent success for smoother UX, or use a Toast if available
         } catch (error: any) {
-            console.error('Error saving attendance:', error.response?.data || error.message);
-            Alert.alert('Gagal', error.response?.data?.message || 'Gagal menyimpan presensi');
+            const errorMessage = error.response?.data?.message || error.message || 'Gagal menyimpan data presensi. Periksa koneksi internet Anda.';
+            Alert.alert('Gagal Presensi', errorMessage);
 
             // Revert optimistic update on error
             setStudents(curr => curr.map(s => s.id === studentId ? { ...s, status: null } : s));
