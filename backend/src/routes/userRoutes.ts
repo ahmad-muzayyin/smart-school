@@ -9,6 +9,7 @@ import { upload } from '../utils/multer';
 const router = express.Router();
 
 router.use(protect);
+router.get('/profile', userController.getMe);
 router.use(requireTenant); // Ensure tenant context
 
 // Public routes (accessible by all authenticated users)

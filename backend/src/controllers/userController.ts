@@ -71,6 +71,25 @@ export const createUser = catchAsync(async (req: Request, res: Response, next: N
     });
 });
 
+export const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await prisma.user.findUnique({
+        where: { id: req.user!.id },
+        include: {
+            tenant: true,
+            class: true
+        }
+    });
+
+    if (!user) {
+        return next(new AppError('User not found', 404));
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: { user }
+    });
+});
+
 export const getTeachers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const tenantId = getTenantId(req);
     if (!tenantId) return next(new AppError('Tenant context missing', 400));
