@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Screen } from '../../components/ui/Screen';
 import { Input } from '../../components/ui/Input';
@@ -15,6 +18,22 @@ export default function LoginScreen() {
     const { login, isLoading, error, clearError } = useAuthStore();
     const { isDarkMode } = useThemeStore();
     const colors = getThemeColors(isDarkMode);
+    const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+
+    React.useEffect(() => {
+        checkBiometricSupport();
+    }, []);
+
+    const checkBiometricSupport = async () => {
+        try {
+            const hasHardware = await LocalAuthentication.hasHardwareAsync();
+            const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+            const savedCreds = await SecureStore.getItemAsync('biometric_credentials');
+            setIsBiometricSupported(hasHardware && isEnrolled && !!savedCreds);
+        } catch (e) {
+            console.log('Biometric check failed:', e);
+        }
+    };
 
     const handleLogin = async () => {
         setFormValidationError('');
@@ -25,6 +44,39 @@ export default function LoginScreen() {
             return;
         }
         await login(email, password);
+
+        // Check success by looking at store state directly (since login is void/doesn't throw)
+        const state = useAuthStore.getState();
+        if (state.token && !state.error) {
+            // Save credentials for biometric reuse
+            await SecureStore.setItemAsync('biometric_credentials', JSON.stringify({ email, password }));
+            checkBiometricSupport(); // Update state
+        }
+    };
+
+    const handleBiometricLogin = async () => {
+        try {
+            const result = await LocalAuthentication.authenticateAsync({
+                promptMessage: 'Login dengan Biometrik',
+                fallbackLabel: 'Gunakan Password'
+            });
+
+            if (result.success) {
+                const creds = await SecureStore.getItemAsync('biometric_credentials');
+                if (creds) {
+                    const { email: savedEmail, password: savedPassword } = JSON.parse(creds);
+                    // Fill form for visual feedback (optional)
+                    setEmail(savedEmail);
+                    setPassword(savedPassword);
+                    // Login
+                    await login(savedEmail, savedPassword);
+                } else {
+                    Alert.alert('Error', 'Data login tidak ditemukan. Silakan login manual sekali.');
+                }
+            }
+        } catch (error) {
+            Alert.alert('Gagal', 'Login biometrik gagal.');
+        }
     };
 
     React.useEffect(() => {
@@ -87,6 +139,16 @@ export default function LoginScreen() {
                             style={styles.button}
                             size="lg"
                         />
+
+                        {isBiometricSupported && (
+                            <TouchableOpacity
+                                onPress={handleBiometricLogin}
+                                style={[styles.biometricBtn, { borderColor: defaultColors.primary }]}
+                            >
+                                <Ionicons name="finger-print" size={24} color={defaultColors.primary} />
+                                <Text style={[styles.biometricText, { color: defaultColors.primary }]}>Login dengan Biometrik</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     <View style={styles.footer}>
@@ -175,4 +237,18 @@ const styles = StyleSheet.create({
         maxWidth: 240,
         lineHeight: 18,
     },
+    biometricBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        marginTop: 15,
+        gap: 8
+    },
+    biometricText: {
+        fontWeight: '600',
+        fontSize: 14
+    }
 });

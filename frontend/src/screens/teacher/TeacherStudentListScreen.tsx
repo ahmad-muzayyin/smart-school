@@ -103,8 +103,13 @@ export default function TeacherStudentListScreen({ navigation }: any) {
         // Logic: The student list might not have full tenant details.
         // For ID Card, we rely on what's available. If logo is URL, use it.
 
-        const logoHtml = selectedStudent.tenant?.logo
-            ? `<img src="${selectedStudent.tenant.logo}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px;" />`
+        const rawLogo = selectedStudent.tenant?.logo;
+        const logoSrc = rawLogo
+            ? (rawLogo.startsWith('http') || rawLogo.startsWith('data:') ? rawLogo : `data:image/png;base64,${rawLogo}`)
+            : null;
+
+        const logoHtml = logoSrc
+            ? `<img src="${logoSrc}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px;" />`
             : '';
 
         const html = `
@@ -240,8 +245,12 @@ export default function TeacherStudentListScreen({ navigation }: any) {
             });
             const { tenant, class: classInfo, period, rows } = res.data.data;
 
-            const logoHtml = tenant.logo
-                ? `<img src="${tenant.logo}" style="height: 60px; margin-right: 15px;" />`
+            const logoSrc = tenant.logo
+                ? (tenant.logo.startsWith('http') || tenant.logo.startsWith('data:') ? tenant.logo : `data:image/png;base64,${tenant.logo}`)
+                : null;
+
+            const logoHtml = logoSrc
+                ? `<img src="${logoSrc}" style="height: 60px; margin-right: 15px;" />`
                 : '';
 
             // Build Table Rows
