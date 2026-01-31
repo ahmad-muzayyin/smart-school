@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, shadows, spacing } from '../../theme/theme';
@@ -12,6 +12,7 @@ interface IdentityCardProps {
         role: string;
         email?: string;
         tenantName?: string;
+        logoUrl?: string;
     };
     width?: number;
 }
@@ -31,6 +32,13 @@ export const IdentityCard = ({ user, width = SCREEN_WIDTH - 48 }: IdentityCardPr
             >
                 {/* Header */}
                 <View style={styles.header}>
+                    {user.logoUrl && (
+                        <Image
+                            source={{ uri: user.logoUrl }}
+                            style={styles.logo}
+                            resizeMode="cover"
+                        />
+                    )}
                     <Text style={styles.schoolName}>{user.tenantName || 'NAMA SEKOLAH'}</Text>
                     <Text style={styles.cardTitle}>STUDENT ID CARD</Text>
                 </View>
@@ -94,6 +102,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         letterSpacing: 1,
+    },
+    logo: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginBottom: 8,
+        borderWidth: 2,
+        borderColor: 'white',
+        backgroundColor: 'white'
     },
     cardTitle: {
         color: 'rgba(255,255,255,0.7)',

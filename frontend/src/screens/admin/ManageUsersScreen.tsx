@@ -52,15 +52,31 @@ export default function ManageUsersScreen({ route, navigation }: any) {
     const [showImportResultModal, setShowImportResultModal] = useState(false);
 
     useEffect(() => {
-        if (tenantId) fetchTenantInfo();
+        if (tenantId) {
+            fetchTenantInfo(tenantId);
+        } else {
+            fetchCurrentTenant();
+        }
     }, [tenantId]);
 
-    const fetchTenantInfo = async () => {
+    const fetchTenantInfo = async (id: string) => {
         try {
-            const res = await client.get(`/tenants/${tenantId}`);
+            const res = await client.get(`/tenants/${id}`);
             setTenantInfo(res.data.data.tenant);
         } catch (e) {
             console.error('Fetch tenant error', e);
+        }
+    };
+
+    const fetchCurrentTenant = async () => {
+        try {
+            // Assuming we have an endpoint for 'my tenant' or we use user profile
+            const res = await client.get('/users/profile');
+            if (res.data.data.user.tenant) {
+                setTenantInfo(res.data.data.user.tenant);
+            }
+        } catch (e) {
+            console.error('Fetch current tenant error', e);
         }
     };
 
@@ -272,6 +288,15 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             return;
         }
 
+        if (filteredUsers.length > 50) {
+            Alert.alert(
+                'Peringatan',
+                `Jumlah siswa (${filteredUsers.length}) terlalu banyak untuk dicetak sekaligus. Harap filter per kelas agar tidak error (Max 50).`,
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
         try {
             Alert.alert('Memproses...', `Membuat PDF untuk ${filteredUsers.length} siswa`);
 
@@ -394,8 +419,9 @@ export default function ManageUsersScreen({ route, navigation }: any) {
     };
 
     const handleImportExcel = async () => {
+        let result: any;
         try {
-            const result = await DocumentPicker.getDocumentAsync({
+            result = await DocumentPicker.getDocumentAsync({
                 type: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'text/csv'],
                 copyToCacheDirectory: true
             });
@@ -433,6 +459,14 @@ export default function ManageUsersScreen({ route, navigation }: any) {
             Alert.alert('Gagal Import', msg);
         } finally {
             setLoading(false);
+            // Cleanup cache
+            try {
+                if (result && !result.canceled && result.assets && result.assets[0].uri) {
+                    await FileSystem.deleteAsync(result.assets[0].uri, { idempotent: true });
+                }
+            } catch (e) {
+                console.log('Cleanup error (non-fatal):', e);
+            }
         }
     };
 
@@ -805,7 +839,8 @@ export default function ManageUsersScreen({ route, navigation }: any) {
                                     name: selectedStudent.name,
                                     role: 'STUDENT',
                                     email: selectedStudent.email,
-                                    tenantName: tenantInfo?.name || 'Sekolah'
+                                    tenantName: tenantInfo?.name || 'Sekolah',
+                                    logoUrl: tenantInfo?.logo
                                 }}
                             />
                         )}
