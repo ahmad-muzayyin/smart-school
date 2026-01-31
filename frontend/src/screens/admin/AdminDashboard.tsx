@@ -81,12 +81,28 @@ export default function AdminDashboard({ navigation }: any) {
         return currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     };
 
-    const MenuItem = ({ icon, label, color, bg, onPress }: any) => (
-        <TouchableOpacity style={[styles.menuItem, { backgroundColor: isDarkMode ? colors.surface : 'white' }]} onPress={onPress} activeOpacity={0.9}>
-            <View style={[styles.menuIconContainer, { backgroundColor: bg }]}>
-                <Ionicons name={icon} size={28} color={color} />
-            </View>
-            <Text style={[styles.menuLabel, { color: colors.text }]}>{label}</Text>
+    const MenuItem = ({ icon, label, gradientColors, onPress }: any) => (
+        <TouchableOpacity
+            style={[
+                styles.menuItem,
+                {
+                    backgroundColor: isDarkMode ? colors.surface : 'white',
+                    shadowColor: gradientColors[1], // specific colored shadow
+                }
+            ]}
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
+            <View style={styles.menuItemBackgroundDecoration} />
+            <LinearGradient
+                colors={gradientColors}
+                style={styles.menuIconContainer}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
+                <Ionicons name={icon} size={26} color="white" />
+            </LinearGradient>
+            <Text style={[styles.menuLabel, { color: colors.text }]} numberOfLines={2}>{label}</Text>
         </TouchableOpacity>
     );
 
@@ -167,22 +183,19 @@ export default function AdminDashboard({ navigation }: any) {
                     <MenuItem
                         icon="people"
                         label={t('dashboard.teachers')}
-                        color="#EC4899"
-                        bg="#FCE7F3"
+                        gradientColors={['#F472B6', '#DB2777']}
                         onPress={() => navigation.navigate('ManageUsers', { role: 'TEACHER' })}
                     />
                     <MenuItem
                         icon="people-circle"
                         label={t('dashboard.students')}
-                        color="#0EA5E9"
-                        bg="#E0F2FE"
+                        gradientColors={['#38BDF8', '#0284C7']}
                         onPress={() => navigation.navigate('ManageUsers', { role: 'STUDENT' })}
                     />
                     <MenuItem
                         icon="school"
                         label={t('dashboard.classes')}
-                        color="#F97316"
-                        bg="#FFEDD5"
+                        gradientColors={['#FB923C', '#EA580C']}
                         onPress={() => navigation.navigate('ManageClasses')}
                     />
 
@@ -190,22 +203,19 @@ export default function AdminDashboard({ navigation }: any) {
                     <MenuItem
                         icon="calendar"
                         label={t('dashboard.schedules')}
-                        color="#EF4444"
-                        bg="#FEE2E2"
+                        gradientColors={['#F87171', '#DC2626']}
                         onPress={() => navigation.navigate('ViewSchedules')}
                     />
                     <MenuItem
                         icon="book"
                         label={t('dashboard.subjects')}
-                        color="#10B981"
-                        bg="#D1FAE5"
+                        gradientColors={['#34D399', '#059669']}
                         onPress={() => navigation.navigate('ManageSubjects')}
                     />
                     <MenuItem
                         icon="stats-chart"
                         label={t('dashboard.reports')}
-                        color="#3B82F6"
-                        bg="#DBEAFE"
+                        gradientColors={['#60A5FA', '#2563EB']}
                         onPress={() => navigation.navigate('AttendanceReport')}
                     />
 
@@ -214,22 +224,19 @@ export default function AdminDashboard({ navigation }: any) {
                     <MenuItem
                         icon="notifications"
                         label={t('dashboard.announcements')}
-                        color="#84CC16"
-                        bg="#ECFCCB"
+                        gradientColors={['#A3E635', '#65A30D']}
                         onPress={() => { }}
                     />
                     <MenuItem
                         icon="settings"
                         label={t('settings.title')}
-                        color="#8B5CF6"
-                        bg="#EDE9FE"
+                        gradientColors={['#A78BFA', '#7C3AED']}
                         onPress={() => navigation.navigate('Settings')}
                     />
                     <MenuItem
                         icon="help-circle"
                         label="Bantuan"
-                        color="#F59E0B"
-                        bg="#FEF3C7"
+                        gradientColors={['#FBBF24', '#D97706']}
                         onPress={() => navigation.navigate('Help')}
                     />
                 </View>
@@ -400,33 +407,52 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        gap: 16,
+        rowGap: 16, // Use rowGap for vertical spacing
     },
     menuItem: {
         width: ITEM_WIDTH,
         backgroundColor: 'white',
-        borderRadius: 24,
-        padding: 16,
+        borderRadius: 20,
+        padding: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        ...shadows.sm,
-        minHeight: 120,
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
+        minHeight: 110,
+        // Improved Shadow
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 5,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    menuItemBackgroundDecoration: {
+        position: 'absolute',
+        top: -20,
+        right: -20,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: 'rgba(0,0,0,0.02)',
     },
     menuIconContainer: {
-        width: 52,
-        height: 52,
-        borderRadius: 20,
+        width: 50,
+        height: 50,
+        borderRadius: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 14,
+        marginBottom: 10,
+        // Inner shadow for depth
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        elevation: 3,
     },
     menuLabel: {
-        fontSize: 13,
-        fontWeight: '700',
+        fontSize: 12,
+        fontWeight: '600',
         textAlign: 'center',
-        lineHeight: 18,
+        lineHeight: 16,
     },
 
 

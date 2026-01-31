@@ -10,7 +10,7 @@ import client from '../../api/client';
 import { useThemeStore } from '../../store/useThemeStore';
 
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = (width - (spacing.xl * 2) - spacing.md) / 2;
+const ITEM_WIDTH = (width - (spacing.xl * 2) - (spacing.md * 2)) / 3;
 
 export default function TeacherDashboard({ navigation }: any) {
     const { user } = useAuthStore();
@@ -98,11 +98,27 @@ export default function TeacherDashboard({ navigation }: any) {
         return currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
     };
 
-    const MenuItem = ({ icon, label, subLabel, color, bg, onPress }: any) => (
-        <TouchableOpacity style={[styles.menuItem, { backgroundColor: isDarkMode ? colors.surface : 'white' }]} onPress={onPress} activeOpacity={0.9}>
-            <View style={[styles.menuIconContainer, { backgroundColor: bg }]}>
-                <Ionicons name={icon} size={24} color={color} />
-            </View>
+    const MenuItem = ({ icon, label, subLabel, gradientColors, onPress }: any) => (
+        <TouchableOpacity
+            style={[
+                styles.menuItem,
+                {
+                    backgroundColor: isDarkMode ? colors.surface : 'white',
+                    shadowColor: gradientColors[1],
+                }
+            ]}
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
+            <View style={styles.menuItemBackgroundDecoration} />
+            <LinearGradient
+                colors={gradientColors}
+                style={styles.menuIconContainer}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
+                <Ionicons name={icon} size={24} color="white" />
+            </LinearGradient>
             <View style={styles.menuTextContainer}>
                 <Text style={[styles.menuLabel, { color: colors.text }]}>{label}</Text>
                 {subLabel && <Text style={[styles.menuSubLabel, { color: colors.textSecondary }]}>{subLabel}</Text>}
@@ -171,48 +187,42 @@ export default function TeacherDashboard({ navigation }: any) {
                         icon="calendar"
                         label="Jadwal"
                         subLabel="Agenda Mengajar"
-                        color="#EF4444"
-                        bg="#FEE2E2"
+                        gradientColors={['#EF4444', '#B91C1C']}
                         onPress={() => navigation.navigate('Jadwal')}
                     />
                     <MenuItem
                         icon="document-text"
                         label="Rekap Absensi"
                         subLabel="Laporan Bulanan"
-                        color="#8B5CF6"
-                        bg="#EDE9FE"
+                        gradientColors={['#8B5CF6', '#6D28D9']}
                         onPress={() => navigation.navigate('TeacherClasses')} // Used for Export Rekap now
                     />
                     <MenuItem
                         icon="star"
                         label="Nilai"
                         subLabel="Input Penilaian"
-                        color="#F59E0B"
-                        bg="#FEF3C7"
+                        gradientColors={['#F59E0B', '#B45309']}
                         onPress={() => navigation.navigate('TeacherGrades')}
                     />
                     <MenuItem
                         icon="person"
                         label="Profil"
                         subLabel="Pengaturan Akun"
-                        color="#EC4899"
-                        bg="#FCE7F3"
+                        gradientColors={['#EC4899', '#BE185D']}
                         onPress={() => navigation.navigate('Profil')}
                     />
                     <MenuItem
                         icon="people"
                         label="Data Siswa"
                         subLabel="Daftar Siswa"
-                        color="#10B981"
-                        bg="#D1FAE5"
+                        gradientColors={['#10B981', '#047857']}
                         onPress={() => navigation.navigate('TeacherStudents')}
                     />
                     <MenuItem
                         icon="book"
                         label="Bahan Ajar"
                         subLabel="Materi & Tugas"
-                        color="#3B82F6"
-                        bg="#DBEAFE"
+                        gradientColors={['#3B82F6', '#1D4ED8']}
                         onPress={() => navigation.navigate('TeachingMaterials')}
                     />
                 </View>
@@ -354,40 +364,60 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        gap: 16,
+        rowGap: 16,
     },
     menuItem: {
         width: ITEM_WIDTH,
         backgroundColor: 'white',
-        borderRadius: 24,
-        padding: 16,
+        borderRadius: 20,
+        padding: 10,
         alignItems: 'center',
-        ...shadows.sm,
-        minHeight: 120,
         justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#F3F4F6',
+        minHeight: 120,
+        // Improved Shadow
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 5,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    menuItemBackgroundDecoration: {
+        position: 'absolute',
+        top: -30,
+        right: -30,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'rgba(0,0,0,0.02)',
     },
     menuIconContainer: {
-        width: 52,
-        height: 52,
-        borderRadius: 20,
+        width: 48,
+        height: 48,
+        borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 14,
+        marginBottom: 8,
+        // Inner shadow for depth
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        elevation: 3,
     },
     menuTextContainer: {
         alignItems: 'center',
     },
     menuLabel: {
-        fontSize: 15,
+        fontSize: 12,
         fontWeight: '700',
-        marginBottom: 4,
+        marginBottom: 2,
         textAlign: 'center',
     },
     menuSubLabel: {
-        fontSize: 11,
+        fontSize: 9,
         textAlign: 'center',
         opacity: 0.8,
+        lineHeight: 11
     }
 });
