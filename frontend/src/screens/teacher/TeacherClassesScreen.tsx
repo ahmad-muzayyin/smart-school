@@ -169,54 +169,54 @@ export default function TeacherClassesScreen({ navigation }: any) {
                 : (tenant.logo ? `<div class="logo-container"><img src="${tenant.logo}" class="logo" /></div>` : '');
 
             const html = `
-            <!DOCTYPE html>
-                <html>
-                    <head>
-                        <meta charset="utf-8">
-                            <style>
-                                body {font - family: 'Times New Roman', serif; padding: 20px; }
-                                .header {text - align: center; border-bottom: 3px double black; line-height: 1.2; margin-bottom: 20px; padding-bottom: 10px; position: relative; min-height: 80px; }
-                                .logo-container {position: absolute; left: 0; top: 0; }
-                                .logo {width: 70px; height: auto; }
-                                .school-info {margin - left: 80px; margin-right: 80px; }
-                                .school-name {font - size: 22px; font-weight: bold; text-transform: uppercase; margin: 0; padding-top: 5px; }
-                                .school-address {font - size: 12px; margin: 5px 0 0; }
-                                .title {text - align: center; font-weight: bold; font-size: 16px; margin: 20px 0; text-decoration: underline; margin-top: 30px; }
-                                table {width: 100%; border-collapse: collapse; font-size: 10px; }
-                                th, td {border: 1px solid black; padding: 4px 2px; text-align: center; vertical-align: middle; }
-                                th {background - color: #f0f0f0; }
-                                .name-col {text - align: left; width: 150px; padding-left: 5px; }
-                                .no-col {width: 30px; }
-                                .day-col {width: 15px; font-size: 9px; }
-                                .sum-col {width: 20px; font-weight: bold; }
-                            </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            ${logoHtml}
-                            <div class="school-info">
-                                <h1 class="school-name">${tenant.name || 'NAMA SEKOLAH'}</h1>
-                                <p class="school-address">${tenant.address || ''}</p>
-                            </div>
-                        </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: 'Times New Roman', serif; padding: 20px; }
+    .header { text-align: center; border-bottom: 3px double black; line-height: 1.2; margin-bottom: 20px; padding-bottom: 10px; position: relative; min-height: 80px; }
+    .logo-container { position: absolute; left: 0; top: 0; }
+    .logo { width: 70px; height: auto; }
+    .school-info { margin-left: 80px; margin-right: 80px; } 
+    .school-name { font-size: 22px; font-weight: bold; text-transform: uppercase; margin: 0; padding-top: 5px; }
+    .school-address { font-size: 12px; margin: 5px 0 0; }
+    .title { text-align: center; font-weight: bold; font-size: 16px; margin: 20px 0; text-decoration: underline; margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    th, td { border: 1px solid black; padding: 4px 2px; text-align: center; vertical-align: middle; }
+    th { background-color: #f0f0f0; }
+    .name-col { text-align: left; width: 150px; padding-left: 5px; }
+    .no-col { width: 30px; }
+    .day-col { width: 15px; font-size: 9px; }
+    .sum-col { width: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="header">
+      ${logoHtml}
+      <div class="school-info">
+          <h1 class="school-name">${tenant.name || 'NAMA SEKOLAH'}</h1>
+          <p class="school-address">${tenant.address || ''}</p>
+      </div>
+  </div>
 
-                        <div class="title">REKAP ABSENSI KELAS ${cls.name}<br />BULAN ${period.month}/${period.year}</div>
+  <div class="title">REKAP ABSENSI KELAS ${cls.name}<br/>BULAN ${period.month}/${period.year}</div>
 
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" class="no-col">NO</th>
-                                    <th rowspan="2" class="name-col">NAMA SISWA</th>
-                                    <th colspan="${period.daysInMonth}">TANGGAL</th>
-                                    <th colspan="4">TOTAL</th>
-                                </tr>
-                                <tr>
-                                    ${Array.from({ length: period.daysInMonth }, (_, i) => `<th class="day-col">${i + 1}</th>`).join('')}
-                                    <th class="sum-col">S</th><th class="sum-col">I</th><th class="sum-col">A</th><th class="sum-col">H</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${rows.map((row: any) => `
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2" class="no-col">NO</th>
+        <th rowspan="2" class="name-col">NAMA SISWA</th>
+        <th colspan="${period.daysInMonth}">TANGGAL</th>
+        <th colspan="4">TOTAL</th>
+      </tr>
+      <tr>
+        ${Array.from({ length: period.daysInMonth }, (_, i) => `<th class="day-col">${i + 1}</th>`).join('')}
+        <th class="sum-col">S</th><th class="sum-col">I</th><th class="sum-col">A</th><th class="sum-col">H</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows.map((row: any) => `
         <tr>
           <td>${row.no}</td>
           <td class="name-col">${row.name}</td>
@@ -227,19 +227,19 @@ export default function TeacherClassesScreen({ navigation }: any) {
           <td>${row.stats.h}</td>
         </tr>
       `).join('')}
-                            </tbody>
-                        </table>
-
-                        <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                            <div style="text-align: center; width: 200px;">
-                                <p>Wali Kelas,</p>
-                                <br /><br /><br />
-                                <p style="font-weight: bold; text-decoration: underline;">${user?.name || '...................'}</p>
-                            </div>
-                        </div>
-                    </body>
-                </html>
-            `;
+    </tbody>
+  </table>
+  
+  <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+    <div style="text-align: center; width: 200px;">
+        <p>Wali Kelas,</p>
+        <br/><br/><br/>
+        <p style="font-weight: bold; text-decoration: underline;">${user?.name || '...................'}</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
 
             const { uri } = await Print.printToFileAsync({ html, width: 842, height: 595, base64: false });
             await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
