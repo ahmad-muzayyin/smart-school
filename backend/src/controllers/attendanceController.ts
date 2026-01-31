@@ -141,6 +141,11 @@ export const exportAttendance = catchAsync(async (req: Request, res: Response, n
     const tenantId = getTenantId(req);
     if (!tenantId) return next(new AppError('Tenant context missing', 400));
 
+    // 1. Fetch Tenant Details for Header
+    const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId }
+    });
+
     let filters: any = {};
     if (req.user!.role === 'STUDENT') {
         filters.studentId = req.user!.id;
@@ -164,23 +169,135 @@ export const exportAttendance = catchAsync(async (req: Request, res: Response, n
 
     const attendance = await attendanceService.getAttendanceHistory(tenantId, filters);
 
-    // Format data for Excel
-    const data = attendance.map(a => ({
-        Tanggal: new Date(a.date).toLocaleDateString('id-ID'),
-        Siswa: a.student?.name || 'N/A',
-        Kelas: (a.student as any)?.class?.name || 'N/A',
-        Mapel: a.schedule?.subject || 'N/A',
-        Status: a.status,
-        Catatan: a.notes || '-'
-    }));
+    // 2. Setup ExcelJS Workbook
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Laporan Absensi');
 
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Laporan Absensi');
+    // Setup Columns
+    worksheet.columns = [
+        { header: '', key: 'no', width: 5 },
+        { header: '', key: 'date', width: 15 },
+        { header: '', key: 'student', width: 25 },
+        { header: '', key: 'class', width: 15 },
+        { header: '', key: 'subject', width: 25 },
+        { header: '', key: 'status', width: 15 },
+        { header: '', key: 'notes', width: 30 },
+    ];
 
-    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    // 3. Add Logo & Header (Kop Surat)
+    let startRow = 1;
+
+    // Try to fetch logo if exists
+    if (tenant?.logo) {
+        try {
+            const axios = require('axios');
+            const response = await axios.get(tenant.logo, { responseType: 'arraybuffer' });
+            const imageId = workbook.addImage({
+                buffer: response.data,
+                extension: 'png', // Assuming png, exceljs handles types reasonably well
+            });
+
+            // Insert logo spanning A1:B4
+            worksheet.addImage(imageId, {
+                tl: { col: 0, row: 0 },
+                ext: { width: 100, height: 100 },
+                editAs: 'absolute'
+            });
+
+            // Adjust row height for logo space
+            worksheet.getRow(1).height = 80;
+        } catch (e) {
+            console.error('Failed to load logo for excel:', e);
+            // Ignore error, continue without logo
+        }
+    }
+
+    // Header Text (School Name, Address)
+    // Merge C1:G1 for School Name
+    worksheet.mergeCells('C1:G1');
+    const nameCell = worksheet.getCell('C1');
+    nameCell.value = tenant?.name || 'SEKOLAH';
+    nameCell.font = { name: 'Arial', family: 4, size: 16, bold: true };
+    nameCell.alignment = { vertical: 'middle', horizontal: 'left' };
+
+    // Address
+    if (tenant?.address) {
+        worksheet.mergeCells('C2:G2');
+        const addrCell = worksheet.getCell('C2');
+        addrCell.value = tenant.address;
+        addrCell.font = { name: 'Arial', size: 10 };
+        addrCell.alignment = { vertical: 'middle', horizontal: 'left' };
+    }
+
+    // Report Date Info
+    worksheet.mergeCells('C3:G3');
+    worksheet.getCell('C3').value = `Laporan Presensi: ${req.query.date ? new Date(req.query.date as string).toLocaleDateString('id-ID') : 'Semua Tanggal'}`;
+    worksheet.getCell('C3').font = { italic: true, size: 10 };
+
+
+    // 4. Data Table Header
+    const headerRowIdx = 5;
+    const headerValues = ['No', 'Tanggal', 'Siswa', 'Kelas', 'Mapel', 'Status', 'Catatan'];
+
+    worksheet.getRow(headerRowIdx).values = headerValues;
+
+    // Style Header Row
+    worksheet.getRow(headerRowIdx).font = { bold: true };
+    worksheet.getRow(headerRowIdx).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFEEEEEE' }
+    };
+
+    headerValues.forEach((_, idx) => {
+        const cell = worksheet.getCell(headerRowIdx, idx + 1);
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
+
+
+    // 5. Populate Data
+    let currentRowIdx = headerRowIdx + 1;
+    attendance.forEach((a, index) => {
+        const row = worksheet.getRow(currentRowIdx);
+        row.values = [
+            index + 1,
+            new Date(a.date).toLocaleDateString('id-ID'),
+            a.student?.name || 'N/A',
+            (a.student as any)?.class?.name || 'N/A',
+            a.schedule?.subject || 'N/A',
+            a.status,
+            a.notes || '-'
+        ];
+
+        // Border for data cells
+        for (let i = 1; i <= 7; i++) {
+            const cell = row.getCell(i);
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+            cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            if (i === 1 || i === 2 || i === 6) { // Center No, Date, Status
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            }
+        }
+
+        currentRowIdx++;
+    });
+
+    // Write to buffer
+    const buffer = await workbook.xlsx.writeBuffer();
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=laporan_absensi.xlsx');
+    res.setHeader('Content-Disposition', 'attachment; filename=Laporan_Absensi.xlsx');
     res.send(buffer);
 });
