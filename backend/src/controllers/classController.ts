@@ -100,7 +100,7 @@ export const deleteSchedule = catchAsync(async (req: Request, res: Response, nex
 
 export const getTodaySchedule = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const tenantId = req.user!.tenantId!;
-    const { teacherId, classId, dayOfWeek } = req.query;
+    const { teacherId, classId, dayOfWeek, allTeachers } = req.query;
 
     let filters: any = {};
     if (dayOfWeek) filters.dayOfWeek = Number(dayOfWeek);
@@ -108,7 +108,7 @@ export const getTodaySchedule = catchAsync(async (req: Request, res: Response, n
 
     if (teacherId) {
         filters.teacherId = teacherId;
-    } else if (req.user?.role === 'TEACHER') {
+    } else if (req.user?.role === 'TEACHER' && !allTeachers) {
         filters.teacherId = req.user.id;
     }
 
