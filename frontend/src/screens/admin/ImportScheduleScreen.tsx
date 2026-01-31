@@ -8,7 +8,10 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
+import { useAuthStore } from '../../store/useAuthStore';
+
 export default function ImportScheduleScreen({ navigation }: any) {
+    const { token } = useAuthStore(); // GET TOKEN
     const [loading, setLoading] = useState(false);
     const [report, setReport] = useState<any>(null);
 
@@ -16,7 +19,7 @@ export default function ImportScheduleScreen({ navigation }: any) {
         try {
             setLoading(true);
 
-            // WEB DOWNLOAD LOGIC
+            // WEB DOWNLOAD LOGIC (Tetap dipertahankan untuk laptop)
             if (Platform.OS === 'web') {
                 const response = await client.get('/import/template?type=schedules', {
                     responseType: 'blob'
@@ -33,13 +36,38 @@ export default function ImportScheduleScreen({ navigation }: any) {
                 link.click();
                 link.remove();
                 window.URL.revokeObjectURL(url);
-                Alert.alert('Sukses', 'Template berhasil didownload. Cek folder download Anda.');
+                Alert.alert('Sukses', 'Template berhasil didownload.');
                 return;
             }
 
-            // NATIVE DOWNLOAD LOGIC (Android/iOS)
+            // ANDROID / IOS DOWNLOAD LOGIC
+            // 1. Tentukan lokasi simpan sementara
             const fileUri = FileSystem.documentDirectory + 'Template_Smart_Jadwal.xlsx';
-            Alert.alert('Info', 'Mohon gunakan Web Browser (Laptop/PC) untuk mendownload dan mengedit template Excel ini agar lebih mudah.');
+
+            // 2. Download dengan Header Auth
+            const downloadRes = await FileSystem.downloadAsync(
+                client.defaults.baseURL + '/import/template?type=schedules',
+                fileUri,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            // 3. Share / Simpan File agar bisa dibuka user
+            if (downloadRes.status === 200) {
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(downloadRes.uri, {
+                        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        dialogTitle: 'Simpan Template Excel'
+                    });
+                } else {
+                    Alert.alert('Info', `File tersimpan di: ${downloadRes.uri}`);
+                }
+            } else {
+                throw new Error('Gagal download dari server (Status ' + downloadRes.status + ')');
+            }
 
         } catch (e: any) {
             console.error('Download error:', e);
