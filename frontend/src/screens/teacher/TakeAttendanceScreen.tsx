@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView, LayoutAnimation, UIManager } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import client from '../../api/client';
@@ -38,6 +38,14 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
             </Screen>
         );
     }
+
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            if (UIManager.setLayoutAnimationEnabledExperimental) {
+                UIManager.setLayoutAnimationEnabledExperimental(true);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (scheduleId) {
@@ -100,6 +108,7 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
     };
 
     const submitStatus = async (studentId: string, status: string) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         // Optimistic update
         setStudents(curr => curr.map(s => s.id === studentId ? { ...s, status: status as any } : s));
 
@@ -147,36 +156,49 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
         </TouchableOpacity>
     );
 
-    const renderItem = ({ item }: { item: Student }) => (
-        <View style={[styles.card,
-        {
-            borderLeftColor: item.status === 'PRESENT' ? colors.success :
-                item.status === 'EXCUSED' ? colors.info :
-                    item.status === 'LATE' ? colors.warning :
-                        item.status === 'ABSENT' ? colors.error : 'transparent',
-            borderLeftWidth: item.status ? 4 : 0
-        }
-        ]}>
-            <View style={styles.cardContent}>
-                <View style={styles.studentHeader}>
-                    <View style={styles.avatar}>
-                        <Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
-                    </View>
-                    <View style={styles.nameContainer}>
-                        <Text style={styles.name}>{item.name}</Text>
-                        <Text style={styles.idText}>NIS: {item.id.substring(0, 8).toUpperCase()}</Text>
-                    </View>
-                </View>
+    const renderItem = ({ item }: { item: Student }) => {
+        const getCardBackground = () => {
+            switch (item.status) {
+                case 'PRESENT': return colors.successBackground || '#ECFDF5';
+                case 'EXCUSED': return '#EFF6FF'; // Light Blue
+                case 'LATE': return colors.warningBackground || '#FFFBEB';
+                case 'ABSENT': return colors.errorBackground || '#FEF2F2';
+                default: return colors.surface;
+            }
+        };
 
-                <View style={styles.actionRow}>
-                    <StatusButton label="H" icon="checkmark" active={item.status === 'PRESENT'} color={colors.success} onPress={() => submitStatus(item.id, 'PRESENT')} />
-                    <StatusButton label="I" icon="document-text" active={item.status === 'EXCUSED'} color={colors.info} onPress={() => submitStatus(item.id, 'EXCUSED')} />
-                    <StatusButton label="T" icon="time" active={item.status === 'LATE'} color={colors.warning} onPress={() => submitStatus(item.id, 'LATE')} />
-                    <StatusButton label="A" icon="close" active={item.status === 'ABSENT'} color={colors.error} onPress={() => submitStatus(item.id, 'ABSENT')} />
+        return (
+            <View style={[styles.card,
+            {
+                borderLeftColor: item.status === 'PRESENT' ? colors.success :
+                    item.status === 'EXCUSED' ? colors.info :
+                        item.status === 'LATE' ? colors.warning :
+                            item.status === 'ABSENT' ? colors.error : 'transparent',
+                borderLeftWidth: item.status ? 4 : 0,
+                backgroundColor: getCardBackground()
+            }
+            ]}>
+                <View style={styles.cardContent}>
+                    <View style={styles.studentHeader}>
+                        <View style={[styles.avatar, item.status ? { borderColor: 'transparent', backgroundColor: 'white' } : {}]}>
+                            <Text style={styles.avatarText}>{item.name.charAt(0)}</Text>
+                        </View>
+                        <View style={styles.nameContainer}>
+                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.idText}>NIS: {item.id.substring(0, 8).toUpperCase()}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.actionRow}>
+                        <StatusButton label="H" icon={item.status === 'PRESENT' ? "checkmark-circle" : "checkmark-circle-outline"} active={item.status === 'PRESENT'} color={colors.success} onPress={() => submitStatus(item.id, 'PRESENT')} />
+                        <StatusButton label="I" icon={item.status === 'EXCUSED' ? "document-text" : "document-text-outline"} active={item.status === 'EXCUSED'} color={colors.info} onPress={() => submitStatus(item.id, 'EXCUSED')} />
+                        <StatusButton label="T" icon={item.status === 'LATE' ? "time" : "time-outline"} active={item.status === 'LATE'} color={colors.warning} onPress={() => submitStatus(item.id, 'LATE')} />
+                        <StatusButton label="A" icon={item.status === 'ABSENT' ? "close-circle" : "close-circle-outline"} active={item.status === 'ABSENT'} color={colors.error} onPress={() => submitStatus(item.id, 'ABSENT')} />
+                    </View>
                 </View>
             </View>
-        </View>
-    );
+        );
+    };
 
     return (
         <Screen style={styles.container} safeArea={false}>
