@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import client from '../../api/client';
@@ -17,6 +17,13 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
     const { scheduleId, className } = route.params || {};
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
+    const [scheduleData, setScheduleData] = useState<any>(null);
+
+    // Journal State
+    const [showJournalModal, setShowJournalModal] = useState(false);
+    const [journalTopic, setJournalTopic] = useState('');
+    const [journalNotes, setJournalNotes] = useState('');
+    const [submittingJournal, setSubmittingJournal] = useState(false);
 
     if (!scheduleId && !loading) {
         // Handle missing param gracefully
@@ -44,7 +51,9 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
         try {
             // First, get the schedule to find the classId
             const scheduleRes = await client.get(`/classes/schedules/${scheduleId}`);
-            const classId = scheduleRes.data.data.schedule.classId;
+            const schedule = scheduleRes.data.data.schedule;
+            setScheduleData(schedule);
+            const classId = schedule.classId;
 
             // Then, get students for that class
             const studentsRes = await client.get(`/users/students/by-class/${classId}`);
@@ -195,15 +204,23 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
                         <Text style={styles.headerClassName}>{className}</Text>
                         <Text style={styles.headerSubtitle}>Presensi Harian</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.scanBtn}
-                        onPress={() => navigation.navigate('ScanAttendance', {
-                            scheduleId,
-                            classId: students[0]?.classId // Fallback if needed, but ScanAttendance mainly uses scheduleId
-                        })}
-                    >
-                        <Ionicons name="qr-code-outline" size={20} color="white" />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <TouchableOpacity
+                            style={styles.scanBtn}
+                            onPress={() => setShowJournalModal(true)}
+                        >
+                            <Ionicons name="book-outline" size={20} color="white" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.scanBtn}
+                            onPress={() => navigation.navigate('ScanAttendance', {
+                                scheduleId,
+                                classId: students[0]?.classId
+                            })}
+                        >
+                            <Ionicons name="qr-code-outline" size={20} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <View style={styles.summaryBar}>
@@ -243,6 +260,100 @@ export default function TakeAttendanceScreen({ route, navigation }: any) {
                     </View>
                 }
             />
+            {/* Journal Modal */}
+            <Modal
+                visible={showJournalModal}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setShowJournalModal(false)}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1 }}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContent}>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalTitle}>Jurnal Kelas</Text>
+                                <TouchableOpacity onPress={() => setShowJournalModal(false)}>
+                                    <Ionicons name="close" size={24} color={colors.text} />
+                                </TouchableOpacity>
+                            </View>
+
+                            <ScrollView style={{ marginBottom: 20 }}>
+                                <View style={styles.formGroup}>
+                                    <Text style={styles.label}>Mata Pelajaran</Text>
+                                    <View style={styles.disabledInput}>
+                                        <Text style={{ color: colors.text }}>{scheduleData?.subject || '-'}</Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.formGroup}>
+                                    <Text style={styles.label}>Materi Pembelajaran <Text style={{ color: 'red' }}>*</Text></Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Contoh: Operasi Bilangan Bulat"
+                                        value={journalTopic}
+                                        onChangeText={setJournalTopic}
+                                    />
+                                </View>
+
+                                <View style={styles.formGroup}>
+                                    <Text style={styles.label}>Catatan / Kendala</Text>
+                                    <TextInput
+                                        style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+                                        placeholder="Catatan tambahan..."
+                                        value={journalNotes}
+                                        onChangeText={setJournalNotes}
+                                        multiline
+                                    />
+                                </View>
+                            </ScrollView>
+
+                            <TouchableOpacity
+                                style={[styles.submitBtn, submittingJournal && { opacity: 0.7 }]}
+                                onPress={async () => {
+                                    if (!journalTopic.trim()) {
+                                        Alert.alert('Eror', 'Materi pembelajaran wajib diisi');
+                                        return;
+                                    }
+
+                                    try {
+                                        setSubmittingJournal(true);
+                                        const today = new Date().toISOString().split('T')[0];
+
+                                        await client.post('/journals', {
+                                            classId: scheduleData.classId,
+                                            scheduleId: scheduleId,
+                                            subject: scheduleData.subject,
+                                            date: today,
+                                            topic: journalTopic,
+                                            notes: journalNotes
+                                        });
+
+                                        Alert.alert('Sukses', 'Jurnal kelas berhasil disimpan');
+                                        setShowJournalModal(false);
+                                        setJournalTopic('');
+                                        setJournalNotes('');
+                                    } catch (error: any) {
+                                        console.error('Journal Error:', error);
+                                        Alert.alert('Gagal', error.response?.data?.message || 'Gagal menyimpan jurnal');
+                                    } finally {
+                                        setSubmittingJournal(false);
+                                    }
+                                }}
+                                disabled={submittingJournal}
+                            >
+                                {submittingJournal ? (
+                                    <ActivityIndicator color="white" />
+                                ) : (
+                                    <Text style={styles.submitBtnText}>Simpan Jurnal</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+            </Modal>
         </Screen>
     );
 }
@@ -328,5 +439,59 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center', justifyContent: 'center'
     },
-    statusBtnText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary }
+    statusBtnText: { fontSize: 14, fontWeight: '600', color: colors.textSecondary },
+
+    // Modal Styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end'
+    },
+    modalContent: {
+        backgroundColor: colors.background,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: spacing.lg,
+        maxHeight: '90%'
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.lg
+    },
+    modalTitle: { fontSize: 20, fontWeight: 'bold', color: colors.text },
+    formGroup: { marginBottom: spacing.md },
+    label: { fontSize: 14, fontWeight: '500', marginBottom: 8, color: colors.textSecondary },
+    input: {
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 12,
+        padding: 12,
+        fontSize: 16,
+        color: colors.text,
+        backgroundColor: colors.surface
+    },
+    disabledInput: {
+        backgroundColor: colors.surface,
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: colors.border,
+        opacity: 0.7
+    },
+    submitBtn: {
+        backgroundColor: colors.primary,
+        borderRadius: 12,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: spacing.sm,
+        ...shadows.md
+    },
+    submitBtnText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16
+    }
 });
